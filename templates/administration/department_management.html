@@ -1,0 +1,165 @@
+{% extends 'base.html' %} 
+{% load static %} {% block title %}Department Management - Sua Pa LMS{% endblock %} {% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-gray-900">
+        Department Management
+      </h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Manage academic departments and their information
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <a
+        href="{% url 'administration:department_create' %}"
+        class="inline-flex items-center justify-center rounded-md border border-transparent bg-uct-blue px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+      >
+        <i class="fas fa-plus mr-2"></i>
+        Add Department
+      </a>
+    </div>
+  </div>
+
+  <!-- Departments Grid -->
+  <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for dept_stats in departments_with_stats %}
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div
+              class="w-8 h-8 bg-uct-blue rounded-md flex items-center justify-center"
+            >
+              <i class="fas fa-building text-white"></i>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">
+                {{ dept_stats.department.code }}
+              </dt>
+              <dd class="text-lg font-medium text-gray-900">
+                {{ dept_stats.department.name }}
+              </dd>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Department Stats -->
+        <div class="mt-5 grid grid-cols-3 gap-3">
+          <div class="text-center">
+            <div class="text-lg font-semibold text-blue-600">
+              {{ dept_stats.faculty_count }}
+            </div>
+            <div class="text-xs text-gray-500">Faculty</div>
+          </div>
+          <div class="text-center">
+            <div class="text-lg font-semibold text-green-600">
+              {{ dept_stats.student_count }}
+            </div>
+            <div class="text-xs text-gray-500">Students</div>
+          </div>
+          <div class="text-center">
+            <div class="text-lg font-semibold text-purple-600">
+              {{ dept_stats.course_count }}
+            </div>
+            <div class="text-xs text-gray-500">Courses</div>
+          </div>
+        </div>
+
+        <!-- Department Details -->
+        <div class="mt-4">
+          {% if dept_stats.department.head_of_department %}
+          <div class="text-xs text-gray-600">
+            <strong>Head:</strong> {{ dept_stats.department.head_of_department.get_full_name }}
+          </div>
+          {% endif %} {% if dept_stats.department.building %}
+          <div class="text-xs text-gray-600 mt-1">
+            <strong>Building:</strong> {{ dept_stats.department.building }}
+          </div>
+          {% endif %} {% if dept_stats.department.description %}
+          <div class="text-xs text-gray-600 mt-1">
+            {{ dept_stats.department.description|truncatewords:15 }}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="bg-gray-50 px-5 py-3">
+        <div class="text-sm flex justify-between">
+          <a
+            href="{% url 'administration:department_edit' dept_stats.department.pk %}"
+            class="font-medium text-uct-blue hover:text-blue-900"
+          >
+            <i class="fas fa-edit mr-1"></i>Edit
+          </a>
+          <span class="text-gray-400">|</span>
+          <div class="text-gray-500">
+            Budget: ${{ dept_stats.department.budget|floatformat:0|default:"0" }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full">
+      <div class="text-center py-12">
+        <i class="fas fa-building text-4xl text-gray-400 mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+          No departments found
+        </h3>
+        <p class="text-gray-500 mb-4">
+          Get started by creating your first department.
+        </p>
+        <a
+          href="{% url 'administration:department_create' %}"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-uct-blue hover:bg-blue-700"
+        >
+          <i class="fas fa-plus mr-2"></i>
+          Add Department
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Department Statistics Summary -->
+  <div class="mt-8 bg-white shadow rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">Department Overview</h3>
+    </div>
+    <div class="px-6 py-4">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="text-center p-4 bg-blue-50 rounded-lg">
+          <div class="text-2xl font-bold text-blue-600">
+            {{ departments|length }}
+          </div>
+          <div class="text-sm text-blue-600">Total Departments</div>
+        </div>
+        <div class="text-center p-4 bg-green-50 rounded-lg">
+          <div class="text-2xl font-bold text-green-600">
+            {% for dept_stats in departments_with_stats %}
+            {{ dept_stats.faculty_count|add:0 }}{% if not forloop.last %}+{% endif %}{% endfor %}
+          </div>
+          <div class="text-sm text-green-600">Total Faculty</div>
+        </div>
+        <div class="text-center p-4 bg-purple-50 rounded-lg">
+          <div class="text-2xl font-bold text-purple-600">
+            {% for dept_stats in departments_with_stats %}
+            {{ dept_stats.student_count|add:0 }}{% if not forloop.last %}+{% endif %}{% endfor %}
+          </div>
+          <div class="text-sm text-purple-600">Total Students</div>
+        </div>
+        <div class="text-center p-4 bg-yellow-50 rounded-lg">
+          <div class="text-2xl font-bold text-yellow-600">
+            {% for dept_stats in departments_with_stats %}
+            {{ dept_stats.course_count|add:0 }}{% if not forloop.last %}+{% endif %}{% endfor %}
+          </div>
+          <div class="text-sm text-yellow-600">Total Courses</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

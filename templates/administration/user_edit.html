@@ -1,0 +1,341 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}Edit User - {{ user_obj.get_full_name|default:user_obj.username }} - Sua Pa LMS{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <div>
+              <a
+                href="{% url 'administration:dashboard' %}"
+                class="text-gray-400 hover:text-gray-500"
+              >
+                <i class="fas fa-home"></i>
+                <span class="sr-only">Dashboard</span>
+              </a>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right text-gray-400"></i>
+              <a
+                href="{% url 'administration:user_management' %}"
+                class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                >Users</a
+              >
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right text-gray-400"></i>
+              <a
+                href="{% url 'administration:user_detail' user_obj.pk %}"
+                class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                >{{ user_obj.get_full_name|default:user_obj.username }}</a
+              >
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right text-gray-400"></i>
+              <span class="ml-4 text-sm font-medium text-gray-500">Edit</span>
+            </div>
+          </li>
+        </ol>
+      </nav>
+      <h1 class="mt-2 text-2xl font-semibold text-gray-900">Edit User</h1>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="mt-6 max-w-3xl">
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- Error Display -->
+      {% if user_form.non_field_errors or profile_form.non_field_errors %}
+      <div class="rounded-md bg-red-50 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-circle text-red-400"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              Please correct the following errors:
+            </h3>
+            <div class="mt-2 text-sm text-red-700">
+              {{ user_form.non_field_errors }} {{ profile_form.non_field_errors }}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- User Information Card -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Basic Information</h3>
+        </div>
+        <div class="px-6 py-4 space-y-6">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label
+                for="{{ user_form.username.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Username
+              </label>
+              <div class="mt-1">
+                {{ user_form.username }} {% if user_form.username.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ user_form.username.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <label
+                for="{{ user_form.email.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </label>
+              <div class="mt-1">
+                {{ user_form.email }} {% if user_form.email.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ user_form.email.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label
+                for="{{ user_form.first_name.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                First Name
+              </label>
+              <div class="mt-1">
+                {{ user_form.first_name }} {% if user_form.first_name.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ user_form.first_name.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <label
+                for="{{ user_form.last_name.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Last Name
+              </label>
+              <div class="mt-1">
+                {{ user_form.last_name }} {% if user_form.last_name.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ user_form.last_name.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="{{ user_form.is_active.id_for_label }}"
+                name="{{ user_form.is_active.name }}"
+                {% if user_form.is_active.value %}checked{% endif %}
+                class="h-4 w-4 text-uct-blue focus:ring-uct-blue border-gray-300 rounded"
+              />
+              <label
+                for="{{ user_form.is_active.id_for_label }}"
+                class="ml-2 block text-sm text-gray-900"
+              >
+                Active User
+              </label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="{{ user_form.is_staff.id_for_label }}"
+                name="{{ user_form.is_staff.name }}"
+                {% if user_form.is_staff.value %}checked{% endif %}
+                class="h-4 w-4 text-uct-blue focus:ring-uct-blue border-gray-300 rounded"
+              />
+              <label
+                for="{{ user_form.is_staff.id_for_label }}"
+                class="ml-2 block text-sm text-gray-900"
+              >
+                Staff Access
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Information Card -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Profile Information</h3>
+        </div>
+        <div class="px-6 py-4 space-y-6">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label
+                for="{{ profile_form.user_type.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                User Type
+              </label>
+              <div class="mt-1">
+                {{ profile_form.user_type }} {% if profile_form.user_type.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.user_type.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <label
+                for="{{ profile_form.department.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Department
+              </label>
+              <div class="mt-1">
+                {{ profile_form.department }} {% if profile_form.department.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.department.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label
+                for="{{ profile_form.student_id.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Student ID
+              </label>
+              <div class="mt-1">
+                {{ profile_form.student_id }} {% if profile_form.student_id.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.student_id.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+              <p class="mt-1 text-xs text-gray-500">For students only</p>
+            </div>
+            <div>
+              <label
+                for="{{ profile_form.employee_id.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Employee ID
+              </label>
+              <div class="mt-1">
+                {{ profile_form.employee_id }} {% if profile_form.employee_id.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.employee_id.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                For faculty and staff only
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label
+                for="{{ profile_form.phone_number.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Phone Number
+              </label>
+              <div class="mt-1">
+                {{ profile_form.phone_number }} {% if profile_form.phone_number.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.phone_number.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <label
+                for="{{ profile_form.date_of_birth.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Date of Birth
+              </label>
+              <div class="mt-1">
+                {{ profile_form.date_of_birth }} {% if profile_form.date_of_birth.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.date_of_birth.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex justify-end space-x-3">
+        <a
+          href="{% url 'administration:user_detail' user_obj.pk %}"
+          class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-uct-blue"
+        >
+          Cancel
+        </a>
+        <button
+          type="submit"
+          class="bg-uct-blue border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-uct-blue"
+        >
+          <i class="fas fa-save mr-2"></i>
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const userTypeField = document.getElementById("id_user_type");
+    const studentIdField = document.getElementById("id_student_id");
+    const employeeIdField = document.getElementById("id_employee_id");
+
+    function toggleFields() {
+      const userType = userTypeField.value;
+
+      if (userType === "student") {
+        studentIdField.closest(".grid").children[0].style.display = "block";
+        studentIdField.closest(".grid").children[1].style.display = "none";
+      } else if (userType === "faculty" || userType === "admin") {
+        studentIdField.closest(".grid").children[0].style.display = "none";
+        studentIdField.closest(".grid").children[1].style.display = "block";
+      } else {
+        studentIdField.closest(".grid").children[0].style.display = "block";
+        studentIdField.closest(".grid").children[1].style.display = "block";
+      }
+    }
+
+    userTypeField.addEventListener("change", toggleFields);
+    toggleFields(); // Initial call
+  });
+</script>
+{% endblock %}

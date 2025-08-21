@@ -1,0 +1,390 @@
+{% extends 'base.html' %} 
+{% block title %}Profile - Smart Campus UCT{% endblock %} 
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-gray-900">My Profile</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Manage your personal information and account settings
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <a
+        href="{% url 'accounts:profile_edit' %}"
+        class="inline-flex items-center justify-center rounded-md border border-transparent bg-uct-blue px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+      >
+        <i class="fas fa-edit mr-2"></i>
+        Edit Profile
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Profile Info -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Basic Information -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            <i class="fas fa-user mr-2 text-uct-blue"></i>
+            Basic Information
+          </h3>
+        </div>
+        <div class="px-6 py-6">
+          <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user.get_full_name|default:"Not provided" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Username</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ user.username }}</dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Email Address</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user.email|default:"Not provided" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">User Type</dt>
+              <dd class="mt-1">
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if profile.user_type == 'admin' %}bg-purple-100 text-purple-800 {% elif profile.user_type == 'faculty' %}bg-blue-100 text-blue-800 {% elif profile.user_type == 'student' %}bg-green-100 text-green-800 {% else %}bg-gray-100 text-gray-800{% endif %}"
+                >
+                  {{ profile.get_user_type_display }}
+                </span>
+              </dd>
+            </div>
+            {% if profile.student_id %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Student ID</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ profile.student_id }}
+              </dd>
+            </div>
+            {% endif %} {% if profile.employee_id %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Employee ID</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ profile.employee_id }}
+              </dd>
+            </div>
+            {% endif %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Department</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ profile.get_department_display|default:"Not assigned" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Phone Number</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ profile.phone_number|default:"Not provided" }}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Academic Information (for students) -->
+      {% if profile.is_student %}
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            <i class="fas fa-graduation-cap mr-2 text-uct-blue"></i>
+            Academic Information
+          </h3>
+        </div>
+        <div class="px-6 py-6">
+          <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Enrollment Year</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ profile.enrollment_year|default:"Not provided" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">
+                Expected Graduation
+              </dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ profile.graduation_year|default:"Not provided" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">
+                Enrolled Courses
+              </dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user.enrollments.count }} courses
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Current GPA</dt>
+              <dd class="mt-1 text-sm text-gray-900">3.8 / 4.0</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Contact Information -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            <i class="fas fa-address-card mr-2 text-uct-blue"></i>
+            Contact Information
+          </h3>
+        </div>
+        <div class="px-6 py-6">
+          <dl class="grid grid-cols-1 gap-x-4 gap-y-6">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Date of Birth</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ profile.date_of_birth|date:"F d, Y"|default:"Not provided" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Address</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {% if profile.address %} {{ profile.address|linebreaks }} {% else %} Not provided {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Account Settings -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            <i class="fas fa-cog mr-2 text-uct-blue"></i>
+            Account Settings
+          </h3>
+        </div>
+        <div class="px-6 py-6">
+          <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Account Created</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user.date_joined|date:"F d, Y" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Last Login</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user.last_login|date:"F d, Y H:i"|default:"Never" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Profile Updated</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ profile.updated_at|date:"F d, Y" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Account Status</dt>
+              <dd class="mt-1">
+                {% if user.is_active %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                >
+                  <i class="fas fa-check-circle mr-1"></i>
+                  Active
+                </span>
+                {% else %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                >
+                  <i class="fas fa-times-circle mr-1"></i>
+                  Inactive
+                </span>
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Profile Picture -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Profile Picture</h3>
+        </div>
+        <div class="px-6 py-6 text-center">
+          <div class="mb-4">
+            {% if profile.profile_picture %}
+            <img
+              class="mx-auto h-32 w-32 rounded-full object-cover"
+              src="{{ profile.profile_picture.url }}"
+              alt="Profile picture"
+            />
+            {% else %}
+            <div
+              class="mx-auto h-32 w-32 rounded-full bg-gray-300 flex items-center justify-center"
+            >
+              <i class="fas fa-user text-gray-500 text-4xl"></i>
+            </div>
+            {% endif %}
+          </div>
+          <p class="text-sm text-gray-500 mb-4">
+            {% if profile.profile_picture %} Click edit profile to change your
+            picture {% else %} No profile picture uploaded {% endif %}
+          </p>
+          <a
+            href="{% url 'accounts:profile_edit' %}"
+            class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-camera mr-2"></i>
+            Update Picture
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      {% if profile.is_student %}
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Quick Stats</h3>
+        </div>
+        <div class="px-6 py-6">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Enrolled Courses</span>
+              <span class="text-lg font-semibold text-uct-blue"
+                >{{ user.enrollments.count }}</span
+              >
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Completed Assignments</span>
+              <span class="text-lg font-semibold text-green-600"
+                >{{ user.submissions.count }}</span
+              >
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Events Attended</span>
+              <span class="text-lg font-semibold text-purple-600"
+                >{{ user.event_registrations.count }}</span
+              >
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Library Loans</span>
+              <span class="text-lg font-semibold text-indigo-600"
+                >{{ user.library_loans.count }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      {% elif profile.is_faculty %}
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Teaching Stats</h3>
+        </div>
+        <div class="px-6 py-6">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Teaching Courses</span>
+              <span class="text-lg font-semibold text-uct-blue"
+                >{{ user.taught_courses.count }}</span
+              >
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Total Students</span>
+              <span class="text-lg font-semibold text-green-600">150</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Assignments Created</span>
+              <span class="text-lg font-semibold text-purple-600">25</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Events Organized</span>
+              <span class="text-lg font-semibold text-indigo-600"
+                >{{ user.organized_events.count }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Quick Actions -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+        </div>
+        <div class="px-6 py-6 space-y-3">
+          <a
+            href="{% url 'accounts:profile_edit' %}"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-uct-blue hover:bg-blue-800"
+          >
+            <i class="fas fa-edit mr-2"></i>
+            Edit Profile
+          </a>
+          {% if profile.is_student %}
+          <a
+            href="{% url 'student_services:digital_id' %}"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-id-card mr-2"></i>
+            View Digital ID
+          </a>
+          <a
+            href="{% url 'student_services:academic_records' %}"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-transcript mr-2"></i>
+            Academic Records
+          </a>
+          {% endif %}
+          <a
+            href="{% url 'student_services:notifications' %}"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-bell mr-2"></i>
+            Notifications
+          </a>
+        </div>
+      </div>
+
+      <!-- Help & Support -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Help & Support</h3>
+        </div>
+        <div class="px-6 py-6 space-y-3">
+          <a
+            href="#"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-question-circle mr-2"></i>
+            FAQ
+          </a>
+          <a
+            href="#"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-headset mr-2"></i>
+            Contact Support
+          </a>
+          <a
+            href="#"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-book mr-2"></i>
+            User Guide
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

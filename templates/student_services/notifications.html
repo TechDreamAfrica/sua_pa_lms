@@ -1,0 +1,426 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Notifications -
+Sua Pa LMS{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Notifications</h1>
+    <div class="flex space-x-3">
+      <button
+        onclick="markAllAsRead()"
+        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200"
+      >
+        <i class="fas fa-check-double mr-2"></i>Mark All as Read
+      </button>
+      <a
+        href="{% url 'student_services:home' %}"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>Back to Services
+      </a>
+    </div>
+  </div>
+
+  <!-- Notification Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full">
+          <i class="fas fa-bell text-blue-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Total</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ notifications.count }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-red-100 p-3 rounded-full">
+          <i class="fas fa-exclamation-circle text-red-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Unread</p>
+          <p class="text-2xl font-bold text-gray-900">5</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-yellow-100 p-3 rounded-full">
+          <i class="fas fa-star text-yellow-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Important</p>
+          <p class="text-2xl font-bold text-gray-900">3</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-green-100 p-3 rounded-full">
+          <i class="fas fa-calendar text-green-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Today</p>
+          <p class="text-2xl font-bold text-gray-900">2</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Options -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="flex flex-wrap gap-4 items-center">
+      <div class="flex space-x-2">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="unread">Unread</button>
+        <button class="filter-btn" data-filter="important">Important</button>
+        <button class="filter-btn" data-filter="academic">Academic</button>
+        <button class="filter-btn" data-filter="events">Events</button>
+        <button class="filter-btn" data-filter="system">System</button>
+      </div>
+      <div class="flex-1"></div>
+      <div>
+        <select
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option>Sort by Date</option>
+          <option>Sort by Priority</option>
+          <option>Sort by Type</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications List -->
+  {% if notifications %}
+  <div class="bg-white rounded-lg shadow-md divide-y divide-gray-200">
+    <!-- Unread Notifications -->
+    <div
+      class="notification-item unread p-6 hover:bg-gray-50 transition duration-200"
+    >
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <div
+            class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center"
+          >
+            <i class="fas fa-exclamation-triangle text-red-600"></i>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <h3 class="text-lg font-medium text-gray-900">
+                Assignment Due Soon
+              </h3>
+              <span
+                class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800"
+                >Urgent</span
+              >
+              <span class="ml-2 w-2 h-2 bg-blue-600 rounded-full"></span>
+            </div>
+            <span class="text-sm text-gray-500">2 hours ago</span>
+          </div>
+          <p class="mt-1 text-gray-600">
+            Your Data Structures assignment is due tomorrow at 11:59 PM. Don't
+            forget to submit it on time!
+          </p>
+          <div class="mt-3 flex items-center space-x-4">
+            <button
+              class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              <i class="fas fa-external-link-alt mr-1"></i>View Assignment
+            </button>
+            <button
+              onclick="markAsRead(this)"
+              class="text-gray-600 hover:text-gray-800 text-sm"
+            >
+              <i class="fas fa-check mr-1"></i>Mark as Read
+            </button>
+            <button class="text-gray-600 hover:text-gray-800 text-sm">
+              <i class="fas fa-trash mr-1"></i>Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="notification-item unread p-6 hover:bg-gray-50 transition duration-200"
+    >
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <div
+            class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center"
+          >
+            <i class="fas fa-calendar-plus text-green-600"></i>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <h3 class="text-lg font-medium text-gray-900">
+                New Event: Tech Innovation Summit
+              </h3>
+              <span
+                class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >Event</span
+              >
+              <span class="ml-2 w-2 h-2 bg-blue-600 rounded-full"></span>
+            </div>
+            <span class="text-sm text-gray-500">4 hours ago</span>
+          </div>
+          <p class="mt-1 text-gray-600">
+            Join us for the annual Tech Innovation Summit on March 15th.
+            Registration is now open!
+          </p>
+          <div class="mt-3 flex items-center space-x-4">
+            <button
+              class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              <i class="fas fa-calendar mr-1"></i>Register for Event
+            </button>
+            <button
+              onclick="markAsRead(this)"
+              class="text-gray-600 hover:text-gray-800 text-sm"
+            >
+              <i class="fas fa-check mr-1"></i>Mark as Read
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read Notifications -->
+    <div
+      class="notification-item read p-6 hover:bg-gray-50 transition duration-200 opacity-75"
+    >
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <div
+            class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center"
+          >
+            <i class="fas fa-graduation-cap text-blue-600"></i>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <h3 class="text-lg font-medium text-gray-900">Grade Posted</h3>
+              <span
+                class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"
+                >Academic</span
+              >
+            </div>
+            <span class="text-sm text-gray-500">1 day ago</span>
+          </div>
+          <p class="mt-1 text-gray-600">
+            Your grade for Mathematics Quiz 3 has been posted. You scored
+            88/100.
+          </p>
+          <div class="mt-3 flex items-center space-x-4">
+            <button
+              class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              <i class="fas fa-chart-line mr-1"></i>View Grades
+            </button>
+            <button class="text-gray-600 hover:text-gray-800 text-sm">
+              <i class="fas fa-trash mr-1"></i>Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="notification-item read p-6 hover:bg-gray-50 transition duration-200 opacity-75"
+    >
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <div
+            class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center"
+          >
+            <i class="fas fa-users text-purple-600"></i>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <h3 class="text-lg font-medium text-gray-900">
+                Study Group Invitation
+              </h3>
+              <span
+                class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800"
+                >Social</span
+              >
+            </div>
+            <span class="text-sm text-gray-500">2 days ago</span>
+          </div>
+          <p class="mt-1 text-gray-600">
+            Sarah invited you to join the Physics Study Group. Meeting every
+            Tuesday at 3 PM in Library Room 205.
+          </p>
+          <div class="mt-3 flex items-center space-x-4">
+            <button
+              class="text-green-600 hover:text-green-800 text-sm font-medium"
+            >
+              <i class="fas fa-check-circle mr-1"></i>Accept
+            </button>
+            <button class="text-red-600 hover:text-red-800 text-sm font-medium">
+              <i class="fas fa-times-circle mr-1"></i>Decline
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="notification-item read p-6 hover:bg-gray-50 transition duration-200 opacity-75"
+    >
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <div
+            class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center"
+          >
+            <i class="fas fa-cog text-gray-600"></i>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <h3 class="text-lg font-medium text-gray-900">
+                System Maintenance
+              </h3>
+              <span
+                class="ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"
+                >System</span
+              >
+            </div>
+            <span class="text-sm text-gray-500">3 days ago</span>
+          </div>
+          <p class="mt-1 text-gray-600">
+            Scheduled maintenance will occur this weekend from 2 AM to 6 AM.
+            Some services may be temporarily unavailable.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+  <div class="flex justify-center mt-8">
+    <nav class="flex space-x-2">
+      {% if page_obj.has_previous %}
+      <a
+        href="?page=1"
+        class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+        >First</a
+      >
+      <a
+        href="?page={{ page_obj.previous_page_number }}"
+        class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+        >Previous</a
+      >
+      {% endif %}
+
+      <span
+        class="px-3 py-2 bg-blue-600 text-white border border-blue-600 rounded-md"
+      >
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+      <a
+        href="?page={{ page_obj.next_page_number }}"
+        class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+        >Next</a
+      >
+      <a
+        href="?page={{ page_obj.paginator.num_pages }}"
+        class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+        >Last</a
+      >
+      {% endif %}
+    </nav>
+  </div>
+  {% endif %} {% else %}
+  <div class="text-center py-12">
+    <i class="fas fa-bell-slash text-6xl text-gray-300 mb-4"></i>
+    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Notifications</h3>
+    <p class="text-gray-500">You don't have any notifications at this time.</p>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .filter-btn {
+    @apply px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition duration-200;
+  }
+  .filter-btn.active {
+    @apply bg-blue-600 text-white border-blue-600;
+  }
+</style>
+
+<script>
+  function markAsRead(button) {
+    const notificationItem = button.closest(".notification-item");
+    notificationItem.classList.remove("unread");
+    notificationItem.classList.add("read", "opacity-75");
+
+    // Remove the blue dot
+    const blueDot = notificationItem.querySelector(".w-2.h-2.bg-blue-600");
+    if (blueDot) {
+      blueDot.remove();
+    }
+
+    // Update the button text
+    button.innerHTML = '<i class="fas fa-check mr-1"></i>Read';
+    button.disabled = true;
+    button.classList.add("opacity-50", "cursor-not-allowed");
+  }
+
+  function markAllAsRead() {
+    const unreadItems = document.querySelectorAll(".notification-item.unread");
+    unreadItems.forEach((item) => {
+      item.classList.remove("unread");
+      item.classList.add("read", "opacity-75");
+
+      const blueDot = item.querySelector(".w-2.h-2.bg-blue-600");
+      if (blueDot) {
+        blueDot.remove();
+      }
+
+      const markReadBtn = item.querySelector('button[onclick*="markAsRead"]');
+      if (markReadBtn) {
+        markReadBtn.innerHTML = '<i class="fas fa-check mr-1"></i>Read';
+        markReadBtn.disabled = true;
+        markReadBtn.classList.add("opacity-50", "cursor-not-allowed");
+      }
+    });
+
+    alert("All notifications marked as read!");
+  }
+
+  // Filter functionality
+  document.querySelectorAll(".filter-btn").forEach((button) => {
+    button.addEventListener("click", function () {
+      // Remove active class from all buttons
+      document
+        .querySelectorAll(".filter-btn")
+        .forEach((btn) => btn.classList.remove("active"));
+
+      // Add active class to clicked button
+      this.classList.add("active");
+
+      // Filter logic would go here
+      const filter = this.dataset.filter;
+      console.log("Filtering by:", filter);
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Library Search - Sua Pa LMS{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Library Search</h1>
+        <a href="{% url 'student_services:library' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+            <i class="fas fa-arrow-left mr-2"></i>Back to Library
+        </a>
+    </div>
+
+    <!-- Search Form -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <form method="get" class="flex flex-wrap gap-4 items-center">
+            <div class="flex-1 min-w-0">
+                <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Search title, author, keyword..." class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <select name="type" class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Types</option>
+                    <option value="book" {% if request.GET.type == 'book' %}selected{% endif %}>Books</option>
+                    <option value="journal" {% if request.GET.type == 'journal' %}selected{% endif %}>Journals</option>
+                    <option value="article" {% if request.GET.type == 'article' %}selected{% endif %}>Articles</option>
+                    <option value="thesis" {% if request.GET.type == 'thesis' %}selected{% endif %}>Thesis</option>
+                    <option value="multimedia" {% if request.GET.type == 'multimedia' %}selected{% endif %}>Multimedia</option>
+                </select>
+            </div>
+            <div>
+                <select name="availability" class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Items</option>
+                    <option value="available" {% if request.GET.availability == 'available' %}selected{% endif %}>Available Only</option>
+                    <option value="digital" {% if request.GET.availability == 'digital' %}selected{% endif %}>Digital Only</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-200">
+                <i class="fas fa-search mr-2"></i>Search
+            </button>
+        </form>
+    </div>
+
+    <!-- Search Results -->
+    {% if request.GET.search %}
+        <div class="mb-4">
+            <p class="text-gray-600">
+                {% if resources %}
+                    Showing {{ resources|length }} results for "<strong>{{ request.GET.search }}</strong>"
+                {% else %}
+                    No results found for "<strong>{{ request.GET.search }}</strong>"
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+
+    {% if resources %}
+        <!-- Filter and Sort -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="flex justify-between items-center">
+                <div class="flex space-x-4">
+                    <span class="text-sm font-medium text-gray-700">Sort by:</span>
+                    <select class="text-sm border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <option>Relevance</option>
+                        <option>Title A-Z</option>
+                        <option>Author A-Z</option>
+                        <option>Publication Date</option>
+                        <option>Availability</option>
+                    </select>
+                </div>
+                <div class="text-sm text-gray-600">
+                    {{ resources|length }} results
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Grid -->
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Sample Book Result -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200">
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                                <a href="#" class="hover:text-blue-600">Introduction to Machine Learning</a>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-2">by Dr. Sarah Johnson</p>
+                            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                Book
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                Available
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 text-sm mb-4">Comprehensive guide to machine learning algorithms and applications in modern data science.</p>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span><i class="fas fa-calendar mr-1"></i>2023</span>
+                        <span><i class="fas fa-bookmark mr-1"></i>CS-ML-001</span>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm">
+                            View Details
+                        </button>
+                        <button class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-200 text-sm">
+                            Borrow
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Journal Result -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200">
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                                <a href="#" class="hover:text-blue-600">Journal of Computer Science</a>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-2">IEEE Computer Society</p>
+                            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                                Journal
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Digital
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 text-sm mb-4">Latest research in computer science, artificial intelligence, and software engineering.</p>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span><i class="fas fa-calendar mr-1"></i>2024</span>
+                        <span><i class="fas fa-bookmark mr-1"></i>Vol. 45, Issue 3</span>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm">
+                            Read Online
+                        </button>
+                        <button class="flex-1 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-200 text-sm">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Article Result -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200">
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                                <a href="#" class="hover:text-blue-600">Deep Learning Applications in Healthcare</a>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-2">by Dr. Maria Rodriguez et al.</p>
+                            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                                Article
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Digital
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 text-sm mb-4">Exploring the potential of deep learning algorithms in medical diagnosis and treatment.</p>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span><i class="fas fa-calendar mr-1"></i>2024</span>
+                        <span><i class="fas fa-eye mr-1"></i>1,247 views</span>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm">
+                            Read Online
+                        </button>
+                        <button class="flex-1 bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition duration-200 text-sm">
+                            Cite
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Thesis Result -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200">
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                                <a href="#" class="hover:text-blue-600">Blockchain Technology in Supply Chain</a>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-2">by Michael Chen</p>
+                            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                                Master's Thesis
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Digital
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 text-sm mb-4">Analysis of blockchain implementation in modern supply chain management systems.</p>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span><i class="fas fa-calendar mr-1"></i>2023</span>
+                        <span><i class="fas fa-graduation-cap mr-1"></i>UCT</span>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm">
+                            View Abstract
+                        </button>
+                        <button class="flex-1 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-200 text-sm">
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Multimedia Result -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200">
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                                <a href="#" class="hover:text-blue-600">Python Programming Tutorial Series</a>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-2">by Prof. David Williams</p>
+                            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                                Video Course
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                Streaming
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 text-sm mb-4">Complete video course covering Python programming from basics to advanced concepts.</p>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span><i class="fas fa-play mr-1"></i>12 hours</span>
+                        <span><i class="fas fa-list mr-1"></i>24 videos</span>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-200 text-sm">
+                            <i class="fas fa-play mr-1"></i>Watch
+                        </button>
+                        <button class="flex-1 bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition duration-200 text-sm">
+                            Add to List
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample eBook Result -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200">
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                                <a href="#" class="hover:text-blue-600">Digital Signal Processing</a>
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-2">by Dr. Jennifer Lee</p>
+                            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800">
+                                eBook
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Digital
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 text-sm mb-4">Comprehensive textbook on digital signal processing techniques and applications.</p>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span><i class="fas fa-calendar mr-1"></i>2023</span>
+                        <span><i class="fas fa-file-pdf mr-1"></i>PDF</span>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200 text-sm">
+                            Read Online
+                        </button>
+                        <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm">
+                            Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <div class="flex justify-center mt-8">
+                <nav class="flex space-x-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}" class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50">First</a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}" class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Previous</a>
+                    {% endif %}
+                    
+                    <span class="px-3 py-2 bg-blue-600 text-white border border-blue-600 rounded-md">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}" class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}" class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Last</a>
+                    {% endif %}
+                </nav>
+            </div>
+        {% endif %}
+
+    {% elif request.GET.search %}
+        <div class="text-center py-12">
+            <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Results Found</h3>
+            <p class="text-gray-500">Try different keywords or check your spelling.</p>
+            <div class="mt-4">
+                <p class="text-sm text-gray-600 mb-3">Suggestions:</p>
+                <div class="flex justify-center space-x-3">
+                    <a href="?search=machine+learning" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm hover:bg-blue-200">machine learning</a>
+                    <a href="?search=python" class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm hover:bg-green-200">python</a>
+                    <a href="?search=data+science" class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm hover:bg-purple-200">data science</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Initial state - popular searches -->
+        <div class="bg-white rounded-lg shadow-md p-8 text-center">
+            <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">Search Library Resources</h3>
+            <p class="text-gray-500 mb-6">Enter keywords to find books, journals, articles, and more.</p>
+            
+            <div class="mb-6">
+                <p class="text-sm text-gray-600 mb-3">Popular Searches:</p>
+                <div class="flex justify-center flex-wrap gap-3">
+                    <a href="?search=artificial+intelligence" class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm hover:bg-blue-200 transition duration-200">Artificial Intelligence</a>
+                    <a href="?search=data+science" class="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm hover:bg-green-200 transition duration-200">Data Science</a>
+                    <a href="?search=software+engineering" class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm hover:bg-purple-200 transition duration-200">Software Engineering</a>
+                    <a href="?search=mathematics" class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm hover:bg-yellow-200 transition duration-200">Mathematics</a>
+                    <a href="?search=physics" class="bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm hover:bg-red-200 transition duration-200">Physics</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

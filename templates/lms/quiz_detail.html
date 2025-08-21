@@ -1,0 +1,157 @@
+{% extends 'base.html' %} {% load static %} {% block title %}{{ quiz.title }} -
+Smart Campus{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <!-- Breadcrumb -->
+  <nav class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm text-gray-600">
+      <li>
+        <a href="{% url 'lms:dashboard' %}" class="hover:text-blue-600"
+          >Dashboard</a
+        >
+      </li>
+      <li><i class="fas fa-chevron-right"></i></li>
+      <li>
+        <a href="{% url 'lms:quiz_list' %}" class="hover:text-blue-600"
+          >Quizzes</a
+        >
+      </li>
+      <li><i class="fas fa-chevron-right"></i></li>
+      <li class="text-gray-800">{{ quiz.title }}</li>
+    </ol>
+  </nav>
+
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md">
+      <!-- Quiz Header -->
+      <div
+        class="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6 rounded-t-lg"
+      >
+        <h1 class="text-3xl font-bold mb-2">{{ quiz.title }}</h1>
+        <p class="text-green-100">{{ quiz.course.title }}</p>
+      </div>
+
+      <div class="p-6">
+        <!-- Quiz Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="space-y-4">
+            <div class="flex items-center">
+              <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+              <div>
+                <p class="font-medium text-gray-800">Description</p>
+                <p class="text-gray-600">
+                  {{ quiz.description|default:"No description provided" }}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <i class="fas fa-star text-yellow-500 mr-3"></i>
+              <div>
+                <p class="font-medium text-gray-800">Total Points</p>
+                <p class="text-gray-600">{{ quiz.total_points }} points</p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <i class="fas fa-question-circle text-purple-600 mr-3"></i>
+              <div>
+                <p class="font-medium text-gray-800">Questions</p>
+                <p class="text-gray-600">
+                  {{ quiz.questions.count }} questions
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-center">
+              <i class="fas fa-clock text-red-600 mr-3"></i>
+              <div>
+                <p class="font-medium text-gray-800">Time Limit</p>
+                <p class="text-gray-600">
+                  {{ quiz.time_limit|default:"No time limit" }}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <i class="fas fa-redo text-green-600 mr-3"></i>
+              <div>
+                <p class="font-medium text-gray-800">Attempts Allowed</p>
+                <p class="text-gray-600">
+                  {{ quiz.attempts_allowed|default:"Unlimited" }}
+                </p>
+              </div>
+            </div>
+
+            {% if quiz.due_date %}
+            <div class="flex items-center">
+              <i class="fas fa-calendar text-orange-600 mr-3"></i>
+              <div>
+                <p class="font-medium text-gray-800">Due Date</p>
+                <p class="text-gray-600">
+                  {{ quiz.due_date|date:"F d, Y g:i A" }}
+                </p>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Quiz Instructions -->
+        {% if quiz.instructions %}
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-3">Instructions</h2>
+          <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+            <p class="text-gray-700">{{ quiz.instructions }}</p>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Previous Attempts -->
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-3">
+            Your Attempts
+          </h2>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="text-gray-600 mb-3">You have not taken this quiz yet.</p>
+            <div class="text-sm text-gray-500">
+              <p>
+                <strong>Note:</strong> Once you start the quiz, you must
+                complete it. Make sure you have enough time before beginning.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between items-center pt-6 border-t">
+          <a
+            href="{% url 'lms:quiz_list' %}"
+            class="flex items-center text-gray-600 hover:text-blue-600 transition duration-200"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>Back to Quizzes
+          </a>
+
+          <div class="flex space-x-3">
+            {% if quiz.is_available %}
+            <a
+              href="{% url 'lms:take_quiz' quiz.pk %}"
+              class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-200 font-medium"
+            >
+              <i class="fas fa-play mr-2"></i>Start Quiz
+            </a>
+            {% else %}
+            <span
+              class="bg-gray-400 text-white px-6 py-3 rounded-lg cursor-not-allowed font-medium"
+            >
+              <i class="fas fa-lock mr-2"></i>Quiz Not Available
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

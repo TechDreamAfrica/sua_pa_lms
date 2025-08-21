@@ -1,0 +1,273 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}Take Quiz: {{ quiz.title }} - Smart Campus{% endblock %} {% block extra_css %}
+<style>
+  .question-card {
+    border: 2px solid #e5e7eb;
+    transition: border-color 0.2s;
+  }
+  .question-card.answered {
+    border-color: #10b981;
+  }
+  .quiz-timer {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 1000;
+  }
+  @media (max-width: 768px) {
+    .quiz-timer {
+      position: relative;
+      top: 0;
+      right: 0;
+      margin-bottom: 20px;
+    }
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <!-- Quiz Timer -->
+  {% if quiz.time_limit %}
+  <div
+    class="quiz-timer bg-red-100 border border-red-300 text-red-800 px-4 py-2 rounded-lg shadow-md"
+  >
+    <div class="flex items-center">
+      <i class="fas fa-clock mr-2"></i>
+      <span class="font-medium">Time Remaining: </span>
+      <span id="timer" class="font-bold ml-1">{{ quiz.time_limit }}</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="max-w-4xl mx-auto">
+    <!-- Quiz Header -->
+    <div class="bg-white rounded-lg shadow-md mb-6">
+      <div
+        class="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6 rounded-t-lg"
+      >
+        <h1 class="text-2xl font-bold">{{ quiz.title }}</h1>
+        <p class="text-green-100">{{ quiz.course.title }}</p>
+      </div>
+
+      <div class="p-4">
+        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+          <span
+            ><i class="fas fa-question-circle mr-1"></i>{{ questions.count }}
+            Questions</span
+          >
+          <span
+            ><i class="fas fa-star mr-1"></i>{{ quiz.total_points }}
+            Points</span
+          >
+          {% if quiz.time_limit %}
+          <span
+            ><i class="fas fa-clock mr-1"></i>{{ quiz.time_limit }} Time
+            Limit</span
+          >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Form -->
+    <form
+      id="quiz-form"
+      method="post"
+      action="{% url 'lms:submit_quiz' quiz.pk %}"
+    >
+      {% csrf_token %}
+
+      <!-- Progress Bar -->
+      <div class="bg-white rounded-lg shadow-md mb-6 p-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-medium text-gray-700">Progress</span>
+          <span class="text-sm text-gray-600"
+            ><span id="answered-count">0</span> of {{ questions.count }}
+            answered</span
+          >
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div
+            id="progress-bar"
+            class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            style="width: 0%"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Questions -->
+      {% for question in questions %}
+      <div
+        class="question-card bg-white rounded-lg shadow-md mb-6 p-6"
+        data-question="{{ forloop.counter }}"
+      >
+        <div class="flex justify-between items-start mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">
+            Question {{ forloop.counter }}
+            <span class="text-sm font-normal text-gray-600"
+              >({{ question.points }} points)</span
+            >
+          </h3>
+          <span class="text-sm px-2 py-1 bg-gray-100 text-gray-600 rounded">
+            {{ question.get_question_type_display }}
+          </span>
+        </div>
+
+        <div class="mb-6">
+          <p class="text-gray-800 mb-4">{{ question.question_text }}</p>
+
+          {% if question.question_type == 'multiple_choice' %}
+          <div class="space-y-3">
+            {% for choice in question.choices.all %}
+            <label
+              class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+            >
+              <input
+                type="radio"
+                name="question_{{ question.id }}"
+                value="{{ choice.id }}"
+                class="mr-3 text-blue-600"
+                onchange="updateProgress()"
+              />
+              <span class="text-gray-800">{{ choice.choice_text }}</span>
+            </label>
+            {% endfor %}
+          </div>
+          {% elif question.question_type == 'true_false' %}
+          <div class="space-y-3">
+            <label
+              class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+            >
+              <input
+                type="radio"
+                name="question_{{ question.id }}"
+                value="true"
+                class="mr-3 text-blue-600"
+                onchange="updateProgress()"
+              />
+              <span class="text-gray-800">True</span>
+            </label>
+            <label
+              class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+            >
+              <input
+                type="radio"
+                name="question_{{ question.id }}"
+                value="false"
+                class="mr-3 text-blue-600"
+                onchange="updateProgress()"
+              />
+              <span class="text-gray-800">False</span>
+            </label>
+          </div>
+          {% elif question.question_type == 'short_answer' %}
+          <textarea
+            name="question_{{ question.id }}"
+            rows="3"
+            class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your answer here..."
+            onchange="updateProgress()"
+          ></textarea>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+
+      <!-- Submit Section -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center">
+          <div class="text-sm text-gray-600">
+            <p>
+              <strong>Important:</strong> Review your answers before submitting.
+              You cannot change them after submission.
+            </p>
+          </div>
+          <div class="flex space-x-3">
+            <button
+              type="button"
+              onclick="reviewAnswers()"
+              class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition duration-200"
+            >
+              <i class="fas fa-eye mr-2"></i>Review Answers
+            </button>
+            <button
+              type="submit"
+              class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-200"
+              onclick="return confirmSubmit()"
+            >
+              <i class="fas fa-paper-plane mr-2"></i>Submit Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  let totalQuestions = {{ questions.count }};
+
+  function updateProgress() {
+      let answeredCount = 0;
+      let questionCards = document.querySelectorAll('.question-card');
+
+      questionCards.forEach(function(card) {
+          let inputs = card.querySelectorAll('input, textarea');
+          let answered = false;
+
+          inputs.forEach(function(input) {
+              if (input.type === 'radio' && input.checked) {
+                  answered = true;
+              } else if (input.type === 'textarea' && input.value.trim() !== '') {
+                  answered = true;
+              }
+          });
+
+          if (answered) {
+              card.classList.add('answered');
+              answeredCount++;
+          } else {
+              card.classList.remove('answered');
+          }
+      });
+
+      document.getElementById('answered-count').textContent = answeredCount;
+      let progress = (answeredCount / totalQuestions) * 100;
+      document.getElementById('progress-bar').style.width = progress + '%';
+  }
+
+  function reviewAnswers() {
+      alert('Please review your answers before submitting. Scroll through all questions to ensure you have answered them correctly.');
+  }
+
+  function confirmSubmit() {
+      let answeredCount = document.querySelectorAll('.question-card.answered').length;
+
+      if (answeredCount < totalQuestions) {
+          return confirm(`You have only answered ${answeredCount} out of ${totalQuestions} questions. Are you sure you want to submit?`);
+      }
+
+      return confirm('Are you sure you want to submit your quiz? You cannot change your answers after submission.');
+  }
+
+  {% if quiz.time_limit %}
+  // Timer functionality
+  let timeLimit = {{ quiz.time_limit }} * 60; // Convert to seconds
+  let timer = setInterval(function() {
+      let minutes = Math.floor(timeLimit / 60);
+      let seconds = timeLimit % 60;
+
+      document.getElementById('timer').textContent =
+          (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+
+      if (timeLimit <= 0) {
+          clearInterval(timer);
+          alert('Time is up! The quiz will be submitted automatically.');
+          document.getElementById('quiz-form').submit();
+      }
+
+      timeLimit--;
+  }, 1000);
+  {% endif %}
+</script>
+{% endblock %}

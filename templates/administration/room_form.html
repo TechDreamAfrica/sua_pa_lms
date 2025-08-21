@@ -1,0 +1,281 @@
+{% extends 'base.html' %} {% load static %} 
+{% block title %} 
+{% if object %}Edit Room - {{ object.building }} {{ object.number }}
+{% else %}Create Room{% endif %} - Smart Campus {% endblock %} 
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <div>
+              <a
+                href="{% url 'administration:dashboard' %}"
+                class="text-gray-400 hover:text-gray-500"
+              >
+                <i class="fas fa-home"></i>
+                <span class="sr-only">Dashboard</span>
+              </a>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right text-gray-400"></i>
+              <a
+                href="{% url 'administration:room_management' %}"
+                class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                >Rooms</a
+              >
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right text-gray-400"></i>
+              <span class="ml-4 text-sm font-medium text-gray-500">
+                {% if object %}Edit - {{ object.building }} {{ object.number }}{% else %}Create Room{% endif %}
+              </span>
+            </div>
+          </li>
+        </ol>
+      </nav>
+      <h1 class="mt-2 text-2xl font-semibold text-gray-900">
+        {% if object %}Edit Room{% else %}Create Room{% endif %}
+      </h1>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="mt-6 max-w-3xl">
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- Error Display -->
+      {% if form.non_field_errors %}
+      <div class="rounded-md bg-red-50 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-circle text-red-400"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              Please correct the following errors:
+            </h3>
+            <div class="mt-2 text-sm text-red-700">
+              {{ form.non_field_errors }}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Basic Information Card -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Room Information</h3>
+        </div>
+        <div class="px-6 py-4 space-y-6">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label
+                for="{{ form.number.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Room Number *
+              </label>
+              <div class="mt-1">
+                {{ form.number }} {% if form.number.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ form.number.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <label
+                for="{{ form.building.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Building *
+              </label>
+              <div class="mt-1">
+                {{ form.building }} {% if form.building.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ form.building.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label
+                for="{{ form.room_type.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Room Type *
+              </label>
+              <div class="mt-1">
+                {{ form.room_type }} {% if form.room_type.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ form.room_type.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <label
+                for="{{ form.capacity.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Capacity *
+              </label>
+              <div class="mt-1">
+                {{ form.capacity }} {% if form.capacity.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ form.capacity.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+              <p class="mt-1 text-xs text-gray-500">Maximum number of people</p>
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="{{ form.description.id_for_label }}"
+              class="block text-sm font-medium text-gray-700"
+            >
+              Description
+            </label>
+            <div class="mt-1">
+              {{ form.description }} {% if form.description.errors %}
+              <p class="mt-1 text-sm text-red-600">
+                {{ form.description.errors.0 }}
+              </p>
+              {% endif %}
+            </div>
+            <p class="mt-1 text-xs text-gray-500">
+              Brief description of the room
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Card -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Room Features</h3>
+        </div>
+        <div class="px-6 py-4">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="{{ form.has_projector.id_for_label }}"
+                name="{{ form.has_projector.name }}"
+                {% if form.has_projector.value %}checked{% endif %}
+                class="h-4 w-4 text-uct-blue focus:ring-uct-blue border-gray-300 rounded"
+              />
+              <label
+                for="{{ form.has_projector.id_for_label }}"
+                class="ml-2 block text-sm text-gray-900"
+              >
+                <i class="fas fa-video mr-1 text-blue-500"></i>
+                Projector
+              </label>
+            </div>
+
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="{{ form.has_whiteboard.id_for_label }}"
+                name="{{ form.has_whiteboard.name }}"
+                {% if form.has_whiteboard.value %}checked{% endif %}
+                class="h-4 w-4 text-uct-blue focus:ring-uct-blue border-gray-300 rounded"
+              />
+              <label
+                for="{{ form.has_whiteboard.id_for_label }}"
+                class="ml-2 block text-sm text-gray-900"
+              >
+                <i class="fas fa-chalkboard mr-1 text-green-500"></i>
+                Whiteboard
+              </label>
+            </div>
+
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="{{ form.has_computer.id_for_label }}"
+                name="{{ form.has_computer.name }}"
+                {% if form.has_computer.value %}checked{% endif %}
+                class="h-4 w-4 text-uct-blue focus:ring-uct-blue border-gray-300 rounded"
+              />
+              <label
+                for="{{ form.has_computer.id_for_label }}"
+                class="ml-2 block text-sm text-gray-900"
+              >
+                <i class="fas fa-desktop mr-1 text-purple-500"></i>
+                Computer
+              </label>
+            </div>
+
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="{{ form.has_internet.id_for_label }}"
+                name="{{ form.has_internet.name }}"
+                {% if form.has_internet.value %}checked{% endif %}
+                class="h-4 w-4 text-uct-blue focus:ring-uct-blue border-gray-300 rounded"
+              />
+              <label
+                for="{{ form.has_internet.id_for_label }}"
+                class="ml-2 block text-sm text-gray-900"
+              >
+                <i class="fas fa-wifi mr-1 text-yellow-500"></i>
+                Internet Access
+              </label>
+            </div>
+
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="{{ form.is_accessible.id_for_label }}"
+                name="{{ form.is_accessible.name }}"
+                {% if form.is_accessible.value %}checked{% endif %}
+                class="h-4 w-4 text-uct-blue focus:ring-uct-blue border-gray-300 rounded"
+              />
+              <label
+                for="{{ form.is_accessible.id_for_label }}"
+                class="ml-2 block text-sm text-gray-900"
+              >
+                <i class="fas fa-wheelchair mr-1 text-indigo-500"></i>
+                Wheelchair Accessible
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex justify-end space-x-3">
+        <a
+          href="{% url 'administration:room_management' %}"
+          class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-uct-blue"
+        >
+          Cancel
+        </a>
+        <button
+          type="submit"
+          class="bg-uct-blue border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-uct-blue"
+        >
+          <i class="fas fa-save mr-2"></i>
+          {% if object %}Update Room{% else %}Create Room{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

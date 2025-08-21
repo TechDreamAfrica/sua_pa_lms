@@ -1,0 +1,268 @@
+{% extends 'base.html' %} 
+{% block title %}Student Services - Sua Pa LMS UCT{% endblock %} 
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="text-center mb-12">
+    <h1 class="text-3xl font-bold text-gray-900">Student Services</h1>
+    <p class="mt-4 text-lg text-gray-600">
+      Access all your campus services in one convenient location
+    </p>
+  </div>
+
+  <!-- Quick Services Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+    <!-- Digital ID -->
+    <a href="{% url 'student_services:digital_id' %}" class="card-hover">
+      <div
+        class="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:border-uct-blue transition-colors"
+      >
+        <div class="flex items-center mb-4">
+          <div
+            class="w-12 h-12 bg-uct-blue rounded-lg flex items-center justify-center"
+          >
+            <i class="fas fa-id-card text-white text-xl"></i>
+          </div>
+          <h3 class="ml-4 text-lg font-semibold text-gray-900">Digital ID</h3>
+        </div>
+        <p class="text-gray-600">
+          Access your digital student identification card with QR code.
+        </p>
+      </div>
+    </a>
+
+    <!-- Timetable -->
+    <a href="{% url 'student_services:timetable' %}" class="card-hover">
+      <div
+        class="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:border-uct-blue transition-colors"
+      >
+        <div class="flex items-center mb-4">
+          <div
+            class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center"
+          >
+            <i class="fas fa-calendar-alt text-white text-xl"></i>
+          </div>
+          <h3 class="ml-4 text-lg font-semibold text-gray-900">Timetable</h3>
+        </div>
+        <p class="text-gray-600">
+          View your personalized class schedule and upcoming lectures.
+        </p>
+      </div>
+    </a>
+
+    <!-- Academic Records -->
+    <a href="{% url 'student_services:academic_records' %}" class="card-hover">
+      <div
+        class="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:border-uct-blue transition-colors"
+      >
+        <div class="flex items-center mb-4">
+          <div
+            class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center"
+          >
+            <i class="fas fa-graduation-cap text-white text-xl"></i>
+          </div>
+          <h3 class="ml-4 text-lg font-semibold text-gray-900">
+            Academic Records
+          </h3>
+        </div>
+        <p class="text-gray-600">
+          Access your transcripts, grades, and academic history.
+        </p>
+      </div>
+    </a>
+
+    <!-- Events -->
+    <a href="{% url 'student_services:event_list' %}" class="card-hover">
+      <div
+        class="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:border-uct-blue transition-colors"
+      >
+        <div class="flex items-center mb-4">
+          <div
+            class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center"
+          >
+            <i class="fas fa-calendar-check text-white text-xl"></i>
+          </div>
+          <h3 class="ml-4 text-lg font-semibold text-gray-900">
+            Campus Events
+          </h3>
+        </div>
+        <p class="text-gray-600">
+          Discover and register for campus events and activities.
+        </p>
+      </div>
+    </a>
+
+    <!-- Library -->
+    <a href="{% url 'student_services:library' %}" class="card-hover">
+      <div
+        class="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:border-uct-blue transition-colors"
+      >
+        <div class="flex items-center mb-4">
+          <div
+            class="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center"
+          >
+            <i class="fas fa-book text-white text-xl"></i>
+          </div>
+          <h3 class="ml-4 text-lg font-semibold text-gray-900">Library</h3>
+        </div>
+        <p class="text-gray-600">
+          Search library resources and manage your book loans.
+        </p>
+      </div>
+    </a>
+
+    <!-- Notifications -->
+    <a href="{% url 'student_services:notifications' %}" class="card-hover">
+      <div
+        class="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:border-uct-blue transition-colors"
+      >
+        <div class="flex items-center mb-4">
+          <div
+            class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center"
+          >
+            <i class="fas fa-bell text-white text-xl"></i>
+          </div>
+          <h3 class="ml-4 text-lg font-semibold text-gray-900">
+            Notifications
+          </h3>
+        </div>
+        <p class="text-gray-600">
+          Stay updated with important announcements and alerts.
+        </p>
+        {% if recent_notifications %}
+        <span
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-2"
+        >
+          {{ recent_notifications.count }} unread
+        </span>
+        {% endif %}
+      </div>
+    </a>
+  </div>
+
+  <!-- Recent Activity Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Notifications -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          <i class="fas fa-bell mr-2 text-yellow-500"></i>
+          Recent Notifications
+        </h3>
+      </div>
+      <div class="p-6">
+        {% if recent_notifications %}
+        <div class="space-y-4">
+          {% for notification in recent_notifications %}
+          <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+              <div
+                class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"
+              >
+                <i class="fas fa-info text-blue-600 text-sm"></i>
+              </div>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-gray-900">
+                {{ notification.title }}
+              </p>
+              <p class="text-sm text-gray-500">
+                {{ notification.message|truncatewords:15 }}
+              </p>
+              <p class="text-xs text-gray-400 mt-1">
+                {{ notification.created_at|timesince }} ago
+              </p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="mt-4">
+          <a
+            href="{% url 'student_services:notifications' %}"
+            class="text-sm text-uct-blue hover:text-uct-light-blue font-medium"
+          >
+            View all notifications →
+          </a>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+          <i class="fas fa-bell-slash text-gray-300 text-3xl mb-4"></i>
+          <p class="text-gray-500">No new notifications</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          <i class="fas fa-calendar-alt mr-2 text-green-500"></i>
+          Upcoming Events
+        </h3>
+      </div>
+      <div class="p-6">
+        {% if upcoming_events %}
+        <div class="space-y-4">
+          {% for event in upcoming_events %}
+          <div class="border-l-4 border-green-400 bg-green-50 p-4 rounded-r-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-sm font-medium text-green-800">
+                  {{ event.title }}
+                </h4>
+                <p class="text-sm text-green-700">
+                  {{ event.start_datetime|date:"M d, Y H:i" }}
+                </p>
+                <p class="text-xs text-green-600">{{ event.location }}</p>
+              </div>
+              <a
+                href="{% url 'student_services:event_detail' event.pk %}"
+                class="text-green-600 hover:text-green-800"
+              >
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="mt-4">
+          <a
+            href="{% url 'student_services:event_list' %}"
+            class="text-sm text-uct-blue hover:text-uct-light-blue font-medium"
+          >
+            View all events →
+          </a>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+          <i class="fas fa-calendar text-gray-300 text-3xl mb-4"></i>
+          <p class="text-gray-500">No upcoming events</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="mt-8 bg-gradient-uct rounded-lg p-6 text-white">
+    <h3 class="text-lg font-semibold mb-4">Your UCT Journey</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="text-center">
+        <div class="text-2xl font-bold">{{ user.enrollments.count }}</div>
+        <div class="text-sm opacity-90">Enrolled Courses</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold">
+          {{ user.event_registrations.count }}
+        </div>
+        <div class="text-sm opacity-90">Events Attended</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold">3.8</div>
+        <div class="text-sm opacity-90">Current GPA</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

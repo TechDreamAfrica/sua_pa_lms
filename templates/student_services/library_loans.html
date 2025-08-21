@@ -1,0 +1,398 @@
+{% extends 'base.html' %} {% load static %} {% block title %}My Library Loans -
+Sua Pa LMS{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">My Library Loans</h1>
+    <a
+      href="{% url 'student_services:library' %}"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+    >
+      <i class="fas fa-arrow-left mr-2"></i>Back to Library
+    </a>
+  </div>
+
+  <!-- Loan Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full">
+          <i class="fas fa-book text-blue-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Active Loans</p>
+          <p class="text-2xl font-bold text-gray-900">3</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-yellow-100 p-3 rounded-full">
+          <i class="fas fa-clock text-yellow-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Due Soon</p>
+          <p class="text-2xl font-bold text-gray-900">1</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-red-100 p-3 rounded-full">
+          <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Overdue</p>
+          <p class="text-2xl font-bold text-gray-900">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-green-100 p-3 rounded-full">
+          <i class="fas fa-history text-green-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Total Borrowed</p>
+          <p class="text-2xl font-bold text-gray-900">25</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="bg-white rounded-lg shadow-md mb-6">
+    <div class="border-b border-gray-200">
+      <nav class="flex space-x-8 px-6">
+        <button
+          class="loan-tab active py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600"
+          data-tab="active"
+        >
+          Active Loans (3)
+        </button>
+        <button
+          class="loan-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700"
+          data-tab="history"
+        >
+          Loan History (22)
+        </button>
+        <button
+          class="loan-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700"
+          data-tab="renewals"
+        >
+          Renewal Requests (0)
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Active Loans -->
+  <div id="active-loans" class="loan-content">
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800">Current Loans</h2>
+      </div>
+
+      <div class="divide-y divide-gray-200">
+        <!-- Loan Item 1 - Due Soon -->
+        <div class="p-6 hover:bg-gray-50 transition duration-200">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start space-x-4">
+              <div
+                class="w-16 h-20 bg-blue-100 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-book text-blue-600 text-xl"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                  Introduction to Data Science
+                </h3>
+                <p class="text-sm text-gray-600 mb-2">by Dr. Sarah Mitchell</p>
+                <p class="text-sm text-gray-500 mb-3">
+                  Call Number: QA76.9.D343 M58 2023
+                </p>
+
+                <div class="flex items-center space-x-4 text-sm">
+                  <span class="flex items-center text-gray-600">
+                    <i class="fas fa-calendar mr-1"></i>
+                    Borrowed: March 5, 2024
+                  </span>
+                  <span class="flex items-center text-yellow-600">
+                    <i class="fas fa-clock mr-1"></i>
+                    Due: March 19, 2024 (2 days)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col space-y-2">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800"
+              >
+                Due Soon
+              </span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm"
+              >
+                Renew
+              </button>
+              <button
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 text-sm"
+              >
+                Return
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loan Item 2 -->
+        <div class="p-6 hover:bg-gray-50 transition duration-200">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start space-x-4">
+              <div
+                class="w-16 h-20 bg-green-100 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-book text-green-600 text-xl"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                  Advanced Machine Learning
+                </h3>
+                <p class="text-sm text-gray-600 mb-2">by Prof. Michael Zhang</p>
+                <p class="text-sm text-gray-500 mb-3">
+                  Call Number: Q325.5 Z53 2023
+                </p>
+
+                <div class="flex items-center space-x-4 text-sm">
+                  <span class="flex items-center text-gray-600">
+                    <i class="fas fa-calendar mr-1"></i>
+                    Borrowed: March 1, 2024
+                  </span>
+                  <span class="flex items-center text-green-600">
+                    <i class="fas fa-clock mr-1"></i>
+                    Due: March 29, 2024 (12 days)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col space-y-2">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+              >
+                Active
+              </span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm"
+              >
+                Renew
+              </button>
+              <button
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 text-sm"
+              >
+                Return
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loan Item 3 -->
+        <div class="p-6 hover:bg-gray-50 transition duration-200">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start space-x-4">
+              <div
+                class="w-16 h-20 bg-purple-100 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-book text-purple-600 text-xl"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                  Python Programming Fundamentals
+                </h3>
+                <p class="text-sm text-gray-600 mb-2">by Dr. Jennifer Lee</p>
+                <p class="text-sm text-gray-500 mb-3">
+                  Call Number: QA76.73.P98 L44 2023
+                </p>
+
+                <div class="flex items-center space-x-4 text-sm">
+                  <span class="flex items-center text-gray-600">
+                    <i class="fas fa-calendar mr-1"></i>
+                    Borrowed: February 28, 2024
+                  </span>
+                  <span class="flex items-center text-green-600">
+                    <i class="fas fa-clock mr-1"></i>
+                    Due: March 28, 2024 (11 days)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col space-y-2">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+              >
+                Active
+              </span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm"
+              >
+                Renew
+              </button>
+              <button
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 text-sm"
+              >
+                Return
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loan History -->
+  <div id="loan-history" class="loan-content hidden">
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800">Loan History</h2>
+      </div>
+
+      <div class="divide-y divide-gray-200">
+        <!-- Historical Loan Item -->
+        <div class="p-6 hover:bg-gray-50 transition duration-200">
+          <div class="flex items-start justify-between">
+            <div class="flex items-start space-x-4">
+              <div
+                class="w-16 h-20 bg-gray-100 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-book text-gray-600 text-xl"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-1">
+                  Database Systems Design
+                </h3>
+                <p class="text-sm text-gray-600 mb-2">by Dr. Robert Johnson</p>
+                <p class="text-sm text-gray-500 mb-3">
+                  Call Number: QA76.9.D3 J64 2023
+                </p>
+
+                <div class="flex items-center space-x-4 text-sm">
+                  <span class="flex items-center text-gray-600">
+                    <i class="fas fa-calendar mr-1"></i>
+                    Borrowed: February 1, 2024
+                  </span>
+                  <span class="flex items-center text-gray-600">
+                    <i class="fas fa-check mr-1"></i>
+                    Returned: February 28, 2024
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col space-y-2">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800"
+              >
+                Returned
+              </span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm"
+              >
+                Borrow Again
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- More historical items would go here -->
+        <div class="p-6 text-center text-gray-500">
+          <p>Showing 1 of 22 loan history items</p>
+          <button class="mt-2 text-blue-600 hover:text-blue-800">
+            Load More
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Renewal Requests -->
+  <div id="renewal-requests" class="loan-content hidden">
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800">Renewal Requests</h2>
+      </div>
+
+      <div class="p-12 text-center">
+        <i class="fas fa-redo text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">
+          No Pending Renewals
+        </h3>
+        <p class="text-gray-500">
+          You don't have any pending renewal requests.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Library Information -->
+  <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-blue-800 mb-3">
+      <i class="fas fa-info-circle mr-2"></i>
+      Library Loan Information
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-700">
+      <div>
+        <p><strong>Standard Loan Period:</strong> 14 days</p>
+        <p><strong>Maximum Renewals:</strong> 2 times</p>
+        <p><strong>Maximum Active Loans:</strong> 10 books</p>
+      </div>
+      <div>
+        <p><strong>Late Return Fee:</strong> $0.50 per day</p>
+        <p><strong>Lost Book Fee:</strong> Replacement cost + $10</p>
+        <p><strong>Renewal Deadline:</strong> 24 hours before due date</p>
+      </div>
+    </div>
+    <div class="mt-4 pt-4 border-t border-blue-200">
+      <p class="text-sm text-blue-700">
+        <i class="fas fa-phone mr-1"></i>
+        Need help? Contact the library at (555) 123-4567 or email
+        library@uct.edu
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab functionality
+  document.querySelectorAll(".loan-tab").forEach((tab) => {
+    tab.addEventListener("click", function () {
+      // Remove active class from all tabs
+      document.querySelectorAll(".loan-tab").forEach((t) => {
+        t.classList.remove("active", "border-blue-500", "text-blue-600");
+        t.classList.add("border-transparent", "text-gray-500");
+      });
+
+      // Add active class to clicked tab
+      this.classList.add("active", "border-blue-500", "text-blue-600");
+      this.classList.remove("border-transparent", "text-gray-500");
+
+      // Hide all content
+      document.querySelectorAll(".loan-content").forEach((content) => {
+        content.classList.add("hidden");
+      });
+
+      // Show selected content
+      const tabId = this.dataset.tab;
+      if (tabId === "active") {
+        document.getElementById("active-loans").classList.remove("hidden");
+      } else if (tabId === "history") {
+        document.getElementById("loan-history").classList.remove("hidden");
+      } else if (tabId === "renewals") {
+        document.getElementById("renewal-requests").classList.remove("hidden");
+      }
+    });
+  });
+</script>
+{% endblock %}

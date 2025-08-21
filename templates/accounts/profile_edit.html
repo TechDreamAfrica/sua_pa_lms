@@ -1,0 +1,382 @@
+{% extends 'base.html' %} 
+{% block title %}Edit Profile - Smart Campus UCT{% endblock %} {% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-gray-900">Edit Profile</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Update your personal information and account settings
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <a
+        href="{% url 'accounts:profile' %}"
+        class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>
+        Back to Profile
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Form -->
+    <div class="lg:col-span-2">
+      <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- User Information -->
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">
+              <i class="fas fa-user mr-2 text-uct-blue"></i>
+              Basic Information
+            </h3>
+          </div>
+          <div class="px-6 py-6 space-y-6">
+            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+              <div>
+                <label
+                  for="id_first_name"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  First Name
+                </label>
+                <div class="mt-1">{{ user_form.first_name }}</div>
+                {% if user_form.first_name.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ user_form.first_name.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+
+              <div>
+                <label
+                  for="id_last_name"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Last Name
+                </label>
+                <div class="mt-1">{{ user_form.last_name }}</div>
+                {% if user_form.last_name.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ user_form.last_name.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+
+              <div class="sm:col-span-2">
+                <label
+                  for="id_email"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Email Address
+                </label>
+                <div class="mt-1">{{ user_form.email }}</div>
+                {% if user_form.email.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ user_form.email.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Information -->
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">
+              <i class="fas fa-id-card mr-2 text-uct-blue"></i>
+              Profile Information
+            </h3>
+          </div>
+          <div class="px-6 py-6 space-y-6">
+            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+              <div>
+                <label
+                  for="id_phone_number"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Phone Number
+                </label>
+                <div class="mt-1">{{ profile_form.phone_number }}</div>
+                {% if profile_form.phone_number.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.phone_number.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+
+              <div>
+                <label
+                  for="id_date_of_birth"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Date of Birth
+                </label>
+                <div class="mt-1">{{ profile_form.date_of_birth }}</div>
+                {% if profile_form.date_of_birth.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.date_of_birth.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+
+              <div class="sm:col-span-2">
+                <label
+                  for="id_address"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Address
+                </label>
+                <div class="mt-1">{{ profile_form.address }}</div>
+                {% if profile_form.address.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.address.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+
+              <div>
+                <label
+                  for="id_department"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Department
+                </label>
+                <div class="mt-1">{{ profile_form.department }}</div>
+                {% if profile_form.department.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.department.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+
+              {% if profile.is_student %}
+              <div>
+                <label
+                  for="id_enrollment_year"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Enrollment Year
+                </label>
+                <div class="mt-1">{{ profile_form.enrollment_year }}</div>
+                {% if profile_form.enrollment_year.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.enrollment_year.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+
+              <div>
+                <label
+                  for="id_graduation_year"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Expected Graduation Year
+                </label>
+                <div class="mt-1">{{ profile_form.graduation_year }}</div>
+                {% if profile_form.graduation_year.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.graduation_year.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Picture -->
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">
+              <i class="fas fa-camera mr-2 text-uct-blue"></i>
+              Profile Picture
+            </h3>
+          </div>
+          <div class="px-6 py-6">
+            <div class="flex items-center space-x-6">
+              <div class="shrink-0">
+                {% if profile.profile_picture %}
+                <img
+                  class="h-20 w-20 rounded-full object-cover"
+                  src="{{ profile.profile_picture.url }}"
+                  alt="Current profile picture"
+                />
+                {% else %}
+                <div
+                  class="h-20 w-20 rounded-full bg-gray-300 flex items-center justify-center"
+                >
+                  <i class="fas fa-user text-gray-500 text-2xl"></i>
+                </div>
+                {% endif %}
+              </div>
+              <div class="flex-1">
+                <label
+                  for="id_profile_picture"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Upload New Picture
+                </label>
+                <div class="mt-1">{{ profile_form.profile_picture }}</div>
+                {% if profile_form.profile_picture.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ profile_form.profile_picture.errors.0 }}
+                </p>
+                {% endif %}
+                <p class="mt-1 text-xs text-gray-500">
+                  PNG, JPG, GIF up to 5MB
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3">
+          <a
+            href="{% url 'accounts:profile' %}"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            Cancel
+          </a>
+          <button
+            type="submit"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-uct-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-uct-blue"
+          >
+            <i class="fas fa-save mr-2"></i>
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Profile Preview -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Profile Preview</h3>
+        </div>
+        <div class="px-6 py-6 text-center">
+          <div class="mb-4">
+            {% if profile.profile_picture %}
+            <img
+              class="mx-auto h-24 w-24 rounded-full object-cover"
+              src="{{ profile.profile_picture.url }}"
+              alt="Profile picture"
+            />
+            {% else %}
+            <div
+              class="mx-auto h-24 w-24 rounded-full bg-gray-300 flex items-center justify-center"
+            >
+              <i class="fas fa-user text-gray-500 text-2xl"></i>
+            </div>
+            {% endif %}
+          </div>
+          <h4 class="text-lg font-medium text-gray-900">
+            {{ user.get_full_name|default:user.username }}
+          </h4>
+          <p class="text-sm text-gray-500">
+            {{ profile.get_user_type_display }}
+          </p>
+          {% if profile.student_id %}
+          <p class="text-xs text-gray-400 mt-1">ID: {{ profile.student_id }}</p>
+          {% elif profile.employee_id %}
+          <p class="text-xs text-gray-400 mt-1">
+            ID: {{ profile.employee_id }}
+          </p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Security Settings -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Security</h3>
+        </div>
+        <div class="px-6 py-6 space-y-3">
+          <a
+            href="#"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-key mr-2"></i>
+            Change Password
+          </a>
+          <a
+            href="#"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-shield-alt mr-2"></i>
+            Two-Factor Auth
+          </a>
+        </div>
+      </div>
+
+      <!-- Privacy Settings -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Privacy</h3>
+        </div>
+        <div class="px-6 py-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-700">Profile Visibility</span>
+            <select
+              class="text-sm border-gray-300 rounded-md focus:border-uct-blue focus:ring-uct-blue"
+            >
+              <option>Public</option>
+              <option>UCT Only</option>
+              <option>Private</option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-700">Email Notifications</span>
+            <input
+              type="checkbox"
+              checked
+              class="rounded border-gray-300 text-uct-blue focus:ring-uct-blue"
+            />
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-700">Directory Listing</span>
+            <input
+              type="checkbox"
+              checked
+              class="rounded border-gray-300 text-uct-blue focus:ring-uct-blue"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-blue-800">Need Help?</h3>
+            <div class="mt-2 text-sm text-blue-700">
+              <p>
+                Contact IT support if you're having trouble updating your
+                profile or need assistance with account settings.
+              </p>
+            </div>
+            <div class="mt-3">
+              <a
+                href="#"
+                class="text-sm font-medium text-blue-800 hover:text-blue-600"
+              >
+                Contact Support <i class="fas fa-arrow-right ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

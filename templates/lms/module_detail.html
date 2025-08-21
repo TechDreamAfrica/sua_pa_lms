@@ -1,0 +1,139 @@
+{% extends 'base.html' %} {% load static %} {% block title %}{{ module.title }}
+- Smart Campus{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <!-- Breadcrumb -->
+  <nav class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm text-gray-600">
+      <li>
+        <a href="{% url 'lms:dashboard' %}" class="hover:text-blue-600"
+          >Dashboard</a
+        >
+      </li>
+      <li><i class="fas fa-chevron-right"></i></li>
+      <li>
+        <a
+          href="{% url 'lms:course_detail' course.pk %}"
+          class="hover:text-blue-600"
+          >{{ course.title }}</a
+        >
+      </li>
+      <li><i class="fas fa-chevron-right"></i></li>
+      <li class="text-gray-800">{{ module.title }}</li>
+    </ol>
+  </nav>
+
+  <div class="bg-white rounded-lg shadow-md">
+    <!-- Module Header -->
+    <div
+      class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-lg"
+    >
+      <h1 class="text-3xl font-bold mb-2">{{ module.title }}</h1>
+      <p class="text-blue-100">{{ course.title }}</p>
+    </div>
+
+    <div class="p-6">
+      {% if module.description %}
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-3">
+          Module Overview
+        </h2>
+        <p class="text-gray-700">{{ module.description }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Learning Objectives -->
+      {% if module.learning_objectives %}
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-3">
+          Learning Objectives
+        </h2>
+        <div class="bg-blue-50 p-4 rounded-lg">
+          <p class="text-gray-700">{{ module.learning_objectives }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Lessons -->
+      {% if lessons %}
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Lessons</h2>
+        <div class="space-y-4">
+          {% for lesson in lessons %}
+          <div
+            class="border border-gray-200 rounded-lg hover:shadow-md transition duration-200"
+          >
+            <div class="p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <h3 class="text-lg font-medium text-gray-800 mb-2">
+                    {{ lesson.title }}
+                  </h3>
+                  {% if lesson.description %}
+                  <p class="text-gray-600 text-sm mb-3">
+                    {{ lesson.description|truncatewords:20 }}
+                  </p>
+                  {% endif %}
+                  <div class="flex items-center text-sm text-gray-500">
+                    <i class="fas fa-clock mr-1"></i>
+                    <span
+                      >{{ lesson.estimated_duration|default:"30" }}
+                      minutes</span
+                    >
+                    {% if lesson.lesson_type %}
+                    <span class="mx-2">•</span>
+                    <i class="fas fa-tag mr-1"></i>
+                    <span class="capitalize">{{ lesson.lesson_type }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="ml-4">
+                  <button
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+                  >
+                    <i class="fas fa-play mr-2"></i>Start Lesson
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% else %}
+      <div class="text-center py-8">
+        <i class="fas fa-book-open text-4xl text-gray-300 mb-3"></i>
+        <p class="text-gray-600">No lessons available for this module yet.</p>
+      </div>
+      {% endif %}
+
+      <!-- Module Resources -->
+      {% if module.resources %}
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-3">Resources</h2>
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <p class="text-gray-700">{{ module.resources }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Navigation -->
+      <div class="flex justify-between pt-6 border-t">
+        <a
+          href="{% url 'lms:course_detail' course.pk %}"
+          class="flex items-center text-gray-600 hover:text-blue-600 transition duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>Back to Course
+        </a>
+
+        <div class="flex space-x-3">
+          <button
+            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200"
+          >
+            <i class="fas fa-check mr-2"></i>Mark as Complete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

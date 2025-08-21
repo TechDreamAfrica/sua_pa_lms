@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Room Management - Smart Campus{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-gray-900">Room Management</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Manage rooms, facilities, and bookings
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none space-x-2">
+      <a href="{% url 'administration:room_create' %}" 
+         class="inline-flex items-center justify-center rounded-md border border-transparent bg-uct-blue px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto">
+        <i class="fas fa-plus mr-2"></i>
+        Add Room
+      </a>
+      <a href="{% url 'administration:room_booking' %}" 
+         class="inline-flex items-center justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:w-auto">
+        <i class="fas fa-calendar mr-2"></i>
+        View Bookings
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="mt-6 bg-white shadow rounded-lg p-6">
+    <form method="get" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div>
+        <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+        <input type="text" name="search" id="search" value="{{ current_filters.search }}"
+               placeholder="Room number, building..."
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-uct-blue focus:ring-uct-blue sm:text-sm">
+      </div>
+      <div>
+        <label for="building" class="block text-sm font-medium text-gray-700">Building</label>
+        <select name="building" id="building" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-uct-blue focus:ring-uct-blue sm:text-sm">
+          <option value="">All Buildings</option>
+          {% for building in buildings %}
+            <option value="{{ building }}" {% if building == current_filters.building %}selected{% endif %}>{{ building }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="room_type" class="block text-sm font-medium text-gray-700">Room Type</label>
+        <select name="room_type" id="room_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-uct-blue focus:ring-uct-blue sm:text-sm">
+          <option value="">All Types</option>
+          {% for value, display in room_types %}
+            <option value="{{ value }}" {% if value == current_filters.room_type %}selected{% endif %}>{{ display }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="is_available" class="block text-sm font-medium text-gray-700">Availability</label>
+        <select name="is_available" id="is_available" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-uct-blue focus:ring-uct-blue sm:text-sm">
+          <option value="">All</option>
+          <option value="true" {% if current_filters.is_available == 'true' %}selected{% endif %}>Available</option>
+          <option value="false" {% if current_filters.is_available == 'false' %}selected{% endif %}>Unavailable</option>
+        </select>
+      </div>
+      <div class="flex items-end">
+        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent bg-uct-blue px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <i class="fas fa-search mr-2"></i>
+          Filter
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Rooms Grid -->
+  <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for room in rooms %}
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 bg-uct-blue rounded-md flex items-center justify-center">
+                  {% if room.room_type == 'classroom' %}
+                    <i class="fas fa-chalkboard text-white"></i>
+                  {% elif room.room_type == 'laboratory' %}
+                    <i class="fas fa-flask text-white"></i>
+                  {% elif room.room_type == 'lecture_hall' %}
+                    <i class="fas fa-users text-white"></i>
+                  {% elif room.room_type == 'computer_lab' %}
+                    <i class="fas fa-desktop text-white"></i>
+                  {% else %}
+                    <i class="fas fa-door-open text-white"></i>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-medium text-gray-900">{{ room.number }}</h3>
+                <p class="text-sm text-gray-500">{{ room.building }}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm text-gray-500">Capacity</div>
+              <div class="text-lg font-medium text-gray-900">{{ room.capacity }}</div>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <div class="text-sm text-gray-600 mb-2">
+              <strong>Type:</strong> {{ room.get_room_type_display|default:room.room_type|title }}
+            </div>
+            
+            <!-- Room Features -->
+            <div class="flex flex-wrap gap-2 mb-3">
+              {% if room.has_projector %}
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <i class="fas fa-video mr-1"></i> Projector
+                </span>
+              {% endif %}
+              {% if room.has_whiteboard %}
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <i class="fas fa-chalkboard mr-1"></i> Whiteboard
+                </span>
+              {% endif %}
+              {% if room.has_computer %}
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  <i class="fas fa-desktop mr-1"></i> Computer
+                </span>
+              {% endif %}
+              {% if room.has_internet %}
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  <i class="fas fa-wifi mr-1"></i> Internet
+                </span>
+              {% endif %}
+              {% if room.is_accessible %}
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                  <i class="fas fa-wheelchair mr-1"></i> Accessible
+                </span>
+              {% endif %}
+            </div>
+            
+            {% if room.description %}
+              <p class="text-xs text-gray-600 mb-3">{{ room.description|truncatewords:15 }}</p>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 px-5 py-3">
+          <div class="flex justify-between items-center">
+            <div class="flex space-x-2">
+              <a href="{% url 'administration:room_edit' room.pk %}" 
+                 class="text-sm font-medium text-uct-blue hover:text-blue-900">
+                <i class="fas fa-edit mr-1"></i>Edit
+              </a>
+            </div>
+            <div>
+              {% comment %} Availability status could be calculated based on current bookings {% endcomment %}
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Available
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-span-full">
+        <div class="text-center py-12">
+          <i class="fas fa-door-open text-4xl text-gray-400 mb-4"></i>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No rooms found</h3>
+          <p class="text-gray-500 mb-4">Get started by adding your first room.</p>
+          <a href="{% url 'administration:room_create' %}" 
+             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-uct-blue hover:bg-blue-700">
+            <i class="fas fa-plus mr-2"></i>
+            Add Room
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+    <div class="mt-6 flex items-center justify-between">
+      <div class="flex flex-1 justify-between sm:hidden">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Previous</a>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next</a>
+        {% endif %}
+      </div>
+      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Showing
+            <span class="font-medium">{{ page_obj.start_index }}</span>
+            to
+            <span class="font-medium">{{ page_obj.end_index }}</span>
+            of
+            <span class="font-medium">{{ paginator.count }}</span>
+            results
+          </p>
+        </div>
+        <div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <span class="sr-only">Previous</span>
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <span aria-current="page" class="z-10 bg-uct-blue border-uct-blue text-white relative inline-flex items-center px-4 py-2 border text-sm font-medium">{{ num }}</span>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">{{ num }}</a>
+              {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <span class="sr-only">Next</span>
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            {% endif %}
+          </nav>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

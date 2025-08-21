@@ -1,0 +1,338 @@
+{% extends 'base.html' %} 
+{% block title %}
+{{ course.title }} - Smart Campus UCT{% endblock %} 
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Breadcrumb -->
+  <nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <a
+          href="{% url 'lms:dashboard' %}"
+          class="text-gray-700 hover:text-uct-blue">
+          <i class="fas fa-home mr-2"></i>Dashboard
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+          <a
+            href="{% url 'lms:course_list' %}"
+            class="text-gray-700 hover:text-uct-blue"
+            >Courses</a
+          >
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+          <span class="text-gray-500">{{ course.code }}</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Course Header -->
+  <div class="bg-white shadow rounded-lg mb-8">
+    <div class="px-6 py-8">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex-1">
+          <div class="flex items-center mb-4">
+            <span
+              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-uct-blue text-white"
+            >
+              {{ course.code }}
+            </span>
+            <span
+              class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800"
+            >
+              {{ course.get_level_display }}
+            </span>
+            <span class="ml-3 text-sm text-gray-500"
+              >{{ course.credits }} Credits</span
+            >
+          </div>
+
+          <h1 class="text-3xl font-bold text-gray-900 mb-4">
+            {{ course.title }}
+          </h1>
+          <p class="text-lg text-gray-600 mb-4">{{ course.description }}</p>
+
+          <div class="flex items-center text-sm text-gray-500">
+            <i class="fas fa-user mr-2"></i>
+            <span class="mr-4"
+              >Instructor: {{ course.instructor.get_full_name }}</span
+            >
+            <i class="fas fa-building mr-2"></i>
+            <span class="mr-4">{{ course.get_department_display }}</span>
+            <i class="fas fa-users mr-2"></i>
+            <span
+              >{{ course.enrolled_count }}/{{ course.max_students }}
+              enrolled</span
+            >
+          </div>
+        </div>
+
+        <div class="mt-6 lg:mt-0 lg:ml-6">
+          {% if not is_enrolled and user.userprofile.is_student %}
+          <form method="post" action="{% url 'lms:enroll_course' course.pk %}">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="w-full lg:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-uct-blue hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-uct-blue"
+            >
+              <i class="fas fa-plus mr-2"></i>
+              Enroll in Course
+            </button>
+          </form>
+          {% elif is_enrolled %}
+          <div
+            class="inline-flex items-center px-6 py-3 border border-green-500 text-base font-medium rounded-md text-green-700 bg-green-50"
+          >
+            <i class="fas fa-check mr-2"></i>
+            Enrolled
+          </div>
+          {% elif user.userprofile.is_faculty or user.userprofile.is_admin %}
+          <a
+            href="{% url 'administration:course_edit' course.pk %}"
+            class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-edit mr-2"></i>
+            Edit Course
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if is_enrolled or user.userprofile.is_faculty or user.userprofile.is_admin %}
+  <!-- Course Content -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Course Modules -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            <i class="fas fa-list mr-2 text-uct-blue"></i>
+            Course Modules
+          </h3>
+        </div>
+        <div class="p-6">
+          {% if modules %}
+          <div class="space-y-4">
+            {% for module in modules %}
+            <div
+              class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <h4 class="text-md font-medium text-gray-900">
+                    {{ module.title }}
+                  </h4>
+                  <p class="text-sm text-gray-500 mt-1">
+                    {{ module.description|truncatewords:20 }}
+                  </p>
+                  <div class="flex items-center mt-2 text-xs text-gray-400">
+                    <span>{{ module.lessons.count }} lessons</span>
+                  </div>
+                </div>
+                <a
+                  href="{% url 'lms:module_detail' course.pk module.pk %}"
+                  class="ml-4 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-uct-blue bg-blue-50 hover:bg-blue-100"
+                >
+                  View Module
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-8">
+            <i class="fas fa-folder-open text-gray-300 text-4xl mb-4"></i>
+            <p class="text-gray-500">No modules available yet.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Course Announcements -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            <i class="fas fa-bullhorn mr-2 text-uct-blue"></i>
+            Announcements
+          </h3>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <div class="border-l-4 border-blue-400 bg-blue-50 p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-sm font-medium text-blue-800">
+                    Welcome to {{ course.code }}
+                  </h4>
+                  <p class="text-sm text-blue-700 mt-1">
+                    Course has started. Please check the course materials and
+                    upcoming assignments.
+                  </p>
+                  <p class="text-xs text-blue-600 mt-2">Posted 2 days ago</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-l-4 border-yellow-400 bg-yellow-50 p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-sm font-medium text-yellow-800">
+                    Assignment Reminder
+                  </h4>
+                  <p class="text-sm text-yellow-700 mt-1">
+                    Don't forget about the upcoming assignment due next week.
+                  </p>
+                  <p class="text-xs text-yellow-600 mt-2">Posted 1 week ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Quick Actions -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Quick Actions</h3>
+        </div>
+        <div class="p-6 space-y-3">
+          <a
+            href="{% url 'lms:assignment_list' %}"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-tasks mr-2"></i>
+            View Assignments
+          </a>
+          <a
+            href="{% url 'lms:quiz_list' %}"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-question-circle mr-2"></i>
+            Take Quizzes
+          </a>
+          <a
+            href="{% url 'lms:grades' %}"
+            class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            <i class="fas fa-chart-line mr-2"></i>
+            View Grades
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Assignments -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            Recent Assignments
+          </h3>
+        </div>
+        <div class="p-6">
+          {% if assignments %}
+          <div class="space-y-3">
+            {% for assignment in assignments %}
+            <div
+              class="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+            >
+              <div>
+                <h4 class="text-sm font-medium text-gray-900">
+                  {{ assignment.title }}
+                </h4>
+                <p class="text-xs text-gray-500">
+                  Due: {{ assignment.due_date|date:"M d, Y" }}
+                </p>
+              </div>
+              <a
+                href="{% url 'lms:assignment_detail' assignment.pk %}"
+                class="text-uct-blue hover:text-uct-light-blue"
+              >
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-gray-500 text-sm">No assignments yet.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Recent Quizzes -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Recent Quizzes</h3>
+        </div>
+        <div class="p-6">
+          {% if quizzes %}
+          <div class="space-y-3">
+            {% for quiz in quizzes %}
+            <div
+              class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+              <div>
+                <h4 class="text-sm font-medium text-gray-900">
+                  {{ quiz.title }}
+                </h4>
+                <p class="text-xs text-gray-500">
+                  {{ quiz.time_limit_minutes }} minutes
+                </p>
+              </div>
+              <a
+                href="{% url 'lms:quiz_detail' quiz.pk %}"
+                class="text-uct-blue hover:text-uct-light-blue"
+              >
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-gray-500 text-sm">No quizzes yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <!-- Enrollment Required Message -->
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-6 py-8 text-center">
+      <i class="fas fa-lock text-gray-300 text-5xl mb-4"></i>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">
+        Enrollment Required
+      </h3>
+      <p class="text-gray-500 mb-6">
+        You need to enroll in this course to access the content.
+      </p>
+      {% if user.userprofile.is_student %}
+      <form
+        method="post"
+        action="{% url 'lms:enroll_course' course.pk %}"
+        class="inline"
+      >
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-uct-blue hover:bg-blue-800"
+        >
+          <i class="fas fa-plus mr-2"></i>
+          Enroll Now
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,313 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}My Timetable - Sua Pa LMS{% endblock %} 
+{% block extra_css %}
+<style>
+  .time-slot {
+    height: 60px;
+    border: 1px solid #e5e7eb;
+  }
+  .class-block {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border-radius: 8px;
+    padding: 8px;
+    margin: 2px;
+    text-align: center;
+    font-size: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .day-header {
+    background: linear-gradient(135deg, #1f2937, #374151);
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">My Timetable</h1>
+    <div class="flex space-x-3">
+      <button
+        onclick="printTimetable()"
+        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200"
+      >
+        <i class="fas fa-print mr-2"></i>Print
+      </button>
+      <a
+        href="{% url 'student_services:home' %}"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>Back to Services
+      </a>
+    </div>
+  </div>
+
+  <!-- Current Week Info -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h2 class="text-xl font-semibold text-gray-800">Current Week</h2>
+        <p class="text-gray-600">
+          {{ current_week_start|date:"F d" }} - {{ current_week_end|date:"F d, Y" }}
+        </p>
+      </div>
+      <div class="flex space-x-2">
+        <button
+          class="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition duration-200"
+        >
+          <i class="fas fa-chevron-left mr-1"></i>Previous
+        </button>
+        <button
+          class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+        >
+          Today
+        </button>
+        <button
+          class="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition duration-200"
+        >
+          Next<i class="fas fa-chevron-right ml-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timetable Grid -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-full">
+        <thead>
+          <tr class="day-header text-white">
+            <th class="w-20 px-4 py-3 text-center text-sm font-medium">Time</th>
+            <th class="px-4 py-3 text-center text-sm font-medium">Monday</th>
+            <th class="px-4 py-3 text-center text-sm font-medium">Tuesday</th>
+            <th class="px-4 py-3 text-center text-sm font-medium">Wednesday</th>
+            <th class="px-4 py-3 text-center text-sm font-medium">Thursday</th>
+            <th class="px-4 py-3 text-center text-sm font-medium">Friday</th>
+            <th class="px-4 py-3 text-center text-sm font-medium">Saturday</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 8:00 AM -->
+          <tr>
+            <td
+              class="time-slot bg-gray-50 px-4 py-3 text-center text-sm font-medium text-gray-600"
+            >
+              8:00
+            </td>
+            <td class="time-slot px-2 py-1">
+              <div class="class-block">
+                <div class="font-semibold">Mathematics</div>
+                <div>Room 101</div>
+                <div>8:00-9:30</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div class="class-block">
+                <div class="font-semibold">Physics</div>
+                <div>Lab 202</div>
+                <div>8:00-9:30</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div class="class-block">
+                <div class="font-semibold">Mathematics</div>
+                <div>Room 101</div>
+                <div>8:00-9:30</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+          </tr>
+
+          <!-- 9:30 AM -->
+          <tr>
+            <td
+              class="time-slot bg-gray-50 px-4 py-3 text-center text-sm font-medium text-gray-600"
+            >
+              9:30
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-green-500 to-green-600"
+              >
+                <div class="font-semibold">Chemistry</div>
+                <div>Lab 105</div>
+                <div>9:30-11:00</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-purple-500 to-purple-600"
+              >
+                <div class="font-semibold">Computer Science</div>
+                <div>Lab 301</div>
+                <div>9:30-11:00</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1"></td>
+          </tr>
+
+          <!-- 11:00 AM -->
+          <tr>
+            <td
+              class="time-slot bg-gray-50 px-4 py-3 text-center text-sm font-medium text-gray-600"
+            >
+              11:00
+            </td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-red-500 to-red-600"
+              >
+                <div class="font-semibold">English</div>
+                <div>Room 203</div>
+                <div>11:00-12:30</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-yellow-500 to-yellow-600"
+              >
+                <div class="font-semibold">Statistics</div>
+                <div>Room 105</div>
+                <div>11:00-12:30</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-indigo-500 to-indigo-600"
+              >
+                <div class="font-semibold">History</div>
+                <div>Room 204</div>
+                <div>11:00-12:30</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+          </tr>
+
+          <!-- 12:30 PM - Lunch Break -->
+          <tr>
+            <td
+              class="time-slot bg-orange-100 px-4 py-3 text-center text-sm font-medium text-orange-600"
+            >
+              12:30
+            </td>
+            <td
+              colspan="6"
+              class="time-slot bg-orange-50 px-4 py-3 text-center text-sm font-medium text-orange-600"
+            >
+              <i class="fas fa-utensils mr-2"></i>Lunch Break
+            </td>
+          </tr>
+
+          <!-- 2:00 PM -->
+          <tr>
+            <td
+              class="time-slot bg-gray-50 px-4 py-3 text-center text-sm font-medium text-gray-600"
+            >
+              2:00
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-teal-500 to-teal-600"
+              >
+                <div class="font-semibold">Biology</div>
+                <div>Lab 107</div>
+                <div>2:00-3:30</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-pink-500 to-pink-600"
+              >
+                <div class="font-semibold">Psychology</div>
+                <div>Room 206</div>
+                <div>2:00-3:30</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1"></td>
+          </tr>
+
+          <!-- 3:30 PM -->
+          <tr>
+            <td
+              class="time-slot bg-gray-50 px-4 py-3 text-center text-sm font-medium text-gray-600"
+            >
+              3:30
+            </td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-gray-500 to-gray-600"
+              >
+                <div class="font-semibold">Study Hall</div>
+                <div>Library</div>
+                <div>3:30-5:00</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1">
+              <div
+                class="class-block bg-gradient-to-br from-emerald-500 to-emerald-600"
+              >
+                <div class="font-semibold">Lab Session</div>
+                <div>Lab 301</div>
+                <div>3:30-5:00</div>
+              </div>
+            </td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1"></td>
+            <td class="time-slot px-2 py-1"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Upcoming Classes -->
+  <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+      Today's Remaining Classes
+    </h2>
+    <div class="space-y-3">
+      <div
+        class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500"
+      >
+        <div>
+          <h3 class="font-medium text-gray-800">Mathematics</h3>
+          <p class="text-sm text-gray-600">Room 101 • Prof. Johnson</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-medium text-blue-600">Next Class</p>
+          <p class="text-sm text-gray-600">in 2 hours</p>
+        </div>
+      </div>
+
+      <div
+        class="flex items-center justify-between p-3 bg-green-50 rounded-lg border-l-4 border-green-500"
+      >
+        <div>
+          <h3 class="font-medium text-gray-800">Computer Science Lab</h3>
+          <p class="text-sm text-gray-600">Lab 301 • Prof. Smith</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-medium text-green-600">3:30 PM</p>
+          <p class="text-sm text-gray-600">in 4 hours</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function printTimetable() {
+    window.print();
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,451 @@
+{% extends 'base.html' %} 
+{% load static %} {% block title %}Academic Records - Sua Pa LMS{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Academic Records</h1>
+    <div class="flex space-x-3">
+      <button
+        onclick="downloadTranscript()"
+        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200"
+      >
+        <i class="fas fa-download mr-2"></i>Download Transcript
+      </button>
+      <a
+        href="{% url 'student_services:home' %}"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>Back to Services
+      </a>
+    </div>
+  </div>
+
+  <!-- Academic Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full">
+          <i class="fas fa-graduation-cap text-blue-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Overall GPA</p>
+          <p class="text-2xl font-bold text-gray-900">3.45</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-green-100 p-3 rounded-full">
+          <i class="fas fa-book text-green-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Credits Earned</p>
+          <p class="text-2xl font-bold text-gray-900">86</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-yellow-100 p-3 rounded-full">
+          <i class="fas fa-calendar text-yellow-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Current Semester</p>
+          <p class="text-2xl font-bold text-gray-900">6th</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-purple-100 p-3 rounded-full">
+          <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Class Rank</p>
+          <p class="text-2xl font-bold text-gray-900">15/120</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter and Search -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="flex flex-wrap gap-4 items-center">
+      <div class="flex-1 min-w-0">
+        <label for="search" class="sr-only">Search courses</label>
+        <input
+          type="text"
+          id="search"
+          placeholder="Search courses..."
+          class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      <div>
+        <select
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Semesters</option>
+          <option value="2024-1">Spring 2024</option>
+          <option value="2023-2">Fall 2023</option>
+          <option value="2023-1">Spring 2023</option>
+          <option value="2022-2">Fall 2022</option>
+        </select>
+      </div>
+      <div>
+        <select
+          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Grades</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+          <option value="F">F</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Academic Records by Semester -->
+  {% if records %}
+  <!-- Spring 2024 -->
+  <div class="bg-white rounded-lg shadow-md mb-6">
+    <div
+      class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4 rounded-t-lg"
+    >
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-semibold">Spring 2024</h2>
+        <div class="text-right">
+          <p class="text-sm text-blue-100">Semester GPA</p>
+          <p class="text-lg font-bold">3.67</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Course Code
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Course Title
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Credits
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Grade
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Points
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+            >
+              CS301
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              Advanced Data Structures
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">4</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >A</span
+              >
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              4.0
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >Completed</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+            >
+              MATH201
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              Calculus III
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"
+                >B+</span
+              >
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              3.3
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >Completed</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+            >
+              ENG202
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              Technical Writing
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >A-</span
+              >
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              3.7
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >Completed</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+            >
+              PHY201
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              Physics II
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">4</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"
+                >B</span
+              >
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              3.0
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >Completed</span
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+      <div class="flex justify-between text-sm text-gray-600">
+        <span>Total Credits: 14</span>
+        <span>Quality Points: 51.3</span>
+        <span>Semester GPA: 3.67</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fall 2023 -->
+  <div class="bg-white rounded-lg shadow-md mb-6">
+    <div
+      class="bg-gradient-to-r from-green-600 to-teal-600 text-white px-6 py-4 rounded-t-lg"
+    >
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-semibold">Fall 2023</h2>
+        <div class="text-right">
+          <p class="text-sm text-green-100">Semester GPA</p>
+          <p class="text-lg font-bold">3.25</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Course Code
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Course Title
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Credits
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Grade
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Points
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+            >
+              CS201
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              Object Oriented Programming
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">4</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"
+                >B+</span
+              >
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              3.3
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >Completed</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+            >
+              STAT201
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              Statistics for Engineers
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800"
+                >C+</span
+              >
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              2.3
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >Completed</span
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+      <div class="flex justify-between text-sm text-gray-600">
+        <span>Total Credits: 15</span>
+        <span>Quality Points: 48.8</span>
+        <span>Semester GPA: 3.25</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GPA Progress Chart -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">GPA Progress</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <canvas id="gpaChart" width="400" height="200"></canvas>
+      </div>
+      <div class="space-y-4">
+        <div
+          class="flex justify-between items-center p-3 bg-green-50 rounded-lg"
+        >
+          <span class="text-sm font-medium text-gray-700"
+            >Highest Semester GPA</span
+          >
+          <span class="text-lg font-bold text-green-600">3.67</span>
+        </div>
+        <div
+          class="flex justify-between items-center p-3 bg-blue-50 rounded-lg"
+        >
+          <span class="text-sm font-medium text-gray-700">Current GPA</span>
+          <span class="text-lg font-bold text-blue-600">3.45</span>
+        </div>
+        <div
+          class="flex justify-between items-center p-3 bg-purple-50 rounded-lg"
+        >
+          <span class="text-sm font-medium text-gray-700"
+            >Credits Needed to Graduate</span
+          >
+          <span class="text-lg font-bold text-purple-600">34</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="text-center py-12">
+    <i class="fas fa-file-alt text-6xl text-gray-300 mb-4"></i>
+    <h3 class="text-xl font-semibold text-gray-600 mb-2">
+      No Academic Records Found
+    </h3>
+    <p class="text-gray-500">
+      Your academic records will appear here once courses are completed.
+    </p>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  function downloadTranscript() {
+    alert(
+      "Transcript download will be available soon. Please contact the registrar office for official transcripts."
+    );
+  }
+</script>
+{% endblock %}

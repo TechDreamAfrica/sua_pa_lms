@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Campus Events - Sua Pa LMS{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Campus Events</h1>
+        <a href="{% url 'student_services:home' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+            <i class="fas fa-arrow-left mr-2"></i>Back to Services
+        </a>
+    </div>
+
+    <!-- Filter and Search -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <form method="get" class="flex flex-wrap gap-4 items-center">
+            <div class="flex-1 min-w-0">
+                <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Search events..." class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <select name="type" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Categories</option>
+                    <option value="academic" {% if request.GET.type == 'academic' %}selected{% endif %}>Academic</option>
+                    <option value="social" {% if request.GET.type == 'social' %}selected{% endif %}>Social</option>
+                    <option value="sports" {% if request.GET.type == 'sports' %}selected{% endif %}>Sports</option>
+                    <option value="cultural" {% if request.GET.type == 'cultural' %}selected{% endif %}>Cultural</option>
+                    <option value="workshop" {% if request.GET.type == 'workshop' %}selected{% endif %}>Workshop</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                <i class="fas fa-search mr-2"></i>Search
+            </button>
+        </form>
+    </div>
+
+    <!-- Featured Events -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Featured Events</h2>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div class="bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-lg overflow-hidden shadow-lg">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-white bg-opacity-20 text-xs px-2 py-1 rounded-full">Featured</span>
+                        <span class="text-sm opacity-90">Tomorrow</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Tech Innovation Summit</h3>
+                    <p class="text-blue-100 mb-4">Join industry leaders for discussions on emerging technologies and career opportunities.</p>
+                    <div class="flex items-center text-sm text-blue-100 mb-4">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        <span>March 15, 2024 • 9:00 AM</span>
+                    </div>
+                    <div class="flex items-center text-sm text-blue-100 mb-4">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        <span>Main Auditorium</span>
+                    </div>
+                    <button class="w-full bg-white text-blue-600 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-200">
+                        Register Now
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-green-500 to-teal-600 text-white rounded-lg overflow-hidden shadow-lg">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-white bg-opacity-20 text-xs px-2 py-1 rounded-full">Popular</span>
+                        <span class="text-sm opacity-90">This Week</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Spring Sports Festival</h3>
+                    <p class="text-green-100 mb-4">Annual sports competition featuring basketball, soccer, tennis, and more exciting games.</p>
+                    <div class="flex items-center text-sm text-green-100 mb-4">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        <span>March 18-20, 2024</span>
+                    </div>
+                    <div class="flex items-center text-sm text-green-100 mb-4">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        <span>Sports Complex</span>
+                    </div>
+                    <button class="w-full bg-white text-green-600 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-200">
+                        Join Event
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-500 to-red-600 text-white rounded-lg overflow-hidden shadow-lg">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="bg-white bg-opacity-20 text-xs px-2 py-1 rounded-full">New</span>
+                        <span class="text-sm opacity-90">Next Week</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Art & Culture Week</h3>
+                    <p class="text-orange-100 mb-4">Celebrate creativity with art exhibitions, music performances, and cultural shows.</p>
+                    <div class="flex items-center text-sm text-orange-100 mb-4">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        <span>March 22-28, 2024</span>
+                    </div>
+                    <div class="flex items-center text-sm text-orange-100 mb-4">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        <span>Arts Building</span>
+                    </div>
+                    <button class="w-full bg-white text-orange-600 py-2 rounded-lg font-medium hover:bg-gray-50 transition duration-200">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Events -->
+    {% if events %}
+        <div class="bg-white rounded-lg shadow-md">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800">All Events</h2>
+            </div>
+            
+            <div class="divide-y divide-gray-200">
+                {% for event in events %}
+                    <div class="p-6 hover:bg-gray-50 transition duration-200">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <h3 class="text-lg font-semibold text-gray-800 mr-3">
+                                        <a href="{% url 'student_services:event_detail' event.pk %}" class="hover:text-blue-600">
+                                            {{ event.title }}
+                                        </a>
+                                    </h3>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                                        {% if event.event_type == 'academic' %}bg-blue-100 text-blue-800
+                                        {% elif event.event_type == 'social' %}bg-green-100 text-green-800
+                                        {% elif event.event_type == 'sports' %}bg-orange-100 text-orange-800
+                                        {% elif event.event_type == 'cultural' %}bg-purple-100 text-purple-800
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ event.get_event_type_display }}
+                                    </span>
+                                </div>
+                                
+                                <p class="text-gray-600 mb-3">{{ event.description|truncatewords:25 }}</p>
+                                
+                                <div class="flex flex-wrap gap-4 text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-calendar-alt mr-1"></i>
+                                        <span>{{ event.start_datetime|date:"M d, Y" }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        <span>{{ event.start_datetime|date:"g:i A" }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                        <span>{{ event.location|default:"TBA" }}</span>
+                                    </div>
+                                    {% if event.max_capacity %}
+                                        <div class="flex items-center">
+                                            <i class="fas fa-users mr-1"></i>
+                                            <span>{{ event.registered_count }}/{{ event.max_capacity }} registered</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="ml-6 flex flex-col space-y-2">
+                                <a href="{% url 'student_services:event_detail' event.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-center">
+                                    View Details
+                                </a>
+                                {% if event.registration_required %}
+                                    <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200">
+                                        Register
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <div class="flex justify-center mt-8">
+                <nav class="flex space-x-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}" class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50">First</a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}" class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Previous</a>
+                    {% endif %}
+                    
+                    <span class="px-3 py-2 bg-blue-600 text-white border border-blue-600 rounded-md">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}" class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}" class="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Last</a>
+                    {% endif %}
+                </nav>
+            </div>
+        {% endif %}
+
+    {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No Events Found</h3>
+            <p class="text-gray-500">There are no events matching your criteria at this time.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends 'base.html' %} 
+{% block title %}Academic Records Management - Sua Pa LMS{% endblock %} {% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-gray-900">
+        Academic Records Management
+      </h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Manage student academic records with single entry and bulk upload
+        options
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none space-x-3">
+      <a
+        href="{% url 'student_services:add_academic_record' %}"
+        class="inline-flex items-center justify-center rounded-md border border-transparent bg-uct-blue px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+      >
+        <i class="fas fa-plus mr-2"></i>
+        Add Single Record
+      </a>
+      <a
+        href="{% url 'student_services:bulk_upload_academic_records' %}"
+        class="inline-flex items-center justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700"
+      >
+        <i class="fas fa-upload mr-2"></i>
+        Bulk Upload
+      </a>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="fas fa-file-alt text-uct-blue text-2xl"></i>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">
+                Total Records
+              </dt>
+              <dd class="text-lg font-medium text-gray-900">
+                {{ total_records }}
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="fas fa-users text-green-600 text-2xl"></i>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">
+                Students with Records
+              </dt>
+              <dd class="text-lg font-medium text-gray-900">
+                {{ total_students }}
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">
+                Records This Month
+              </dt>
+              <dd class="text-lg font-medium text-gray-900">
+                {{ recent_records|length }}
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-white shadow rounded-lg mb-8">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900">
+        <i class="fas fa-bolt mr-2 text-uct-blue"></i>
+        Quick Actions
+      </h3>
+    </div>
+    <div class="px-6 py-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a
+          href="{% url 'student_services:add_academic_record' %}"
+          class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-uct-blue hover:bg-blue-50 transition-colors"
+        >
+          <div class="flex-shrink-0">
+            <i class="fas fa-plus-circle text-uct-blue text-xl"></i>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-900">Add Single Record</p>
+            <p class="text-xs text-gray-500">Add individual academic record</p>
+          </div>
+        </a>
+
+        <a
+          href="{% url 'student_services:bulk_upload_academic_records' %}"
+          class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors"
+        >
+          <div class="flex-shrink-0">
+            <i class="fas fa-upload text-green-600 text-xl"></i>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-900">Bulk Upload</p>
+            <p class="text-xs text-gray-500">Upload multiple records via CSV</p>
+          </div>
+        </a>
+
+        <a
+          href="{% url 'student_services:academic_records_list' %}"
+          class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors"
+        >
+          <div class="flex-shrink-0">
+            <i class="fas fa-list text-purple-600 text-xl"></i>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-900">View All Records</p>
+            <p class="text-xs text-gray-500">Browse and filter records</p>
+          </div>
+        </a>
+
+        <a
+          href="{% url 'student_services:download_sample_csv' %}"
+          class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors"
+        >
+          <div class="flex-shrink-0">
+            <i class="fas fa-download text-orange-600 text-xl"></i>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-900">Download Template</p>
+            <p class="text-xs text-gray-500">Get CSV template file</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Records -->
+  <div class="bg-white shadow rounded-lg">
+    <div
+      class="px-6 py-4 border-b border-gray-200 flex items-center justify-between"
+    >
+      <h3 class="text-lg font-semibold text-gray-900">
+        <i class="fas fa-clock mr-2 text-uct-blue"></i>
+        Recent Academic Records
+      </h3>
+      <a
+        href="{% url 'student_services:academic_records_list' %}"
+        class="text-sm text-uct-blue hover:text-blue-800"
+      >
+        View All <i class="fas fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+
+    {% if recent_records %}
+    <div class="overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Student
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Course
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Semester
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Grade
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Points
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Date Added
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for record in recent_records %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-8 w-8">
+                  <div
+                    class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center"
+                  >
+                    <i class="fas fa-user text-gray-500 text-sm"></i>
+                  </div>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm font-medium text-gray-900">
+                    {{ record.student.get_full_name|default:record.student.username }}
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    {{ record.student.userprofile.student_id|default:"N/A" }}
+                  </p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div>
+                <p class="text-sm font-medium text-gray-900">
+                  {{ record.course.code }}
+                </p>
+                <p class="text-xs text-gray-500">
+                  {{ record.course.title|truncatechars:30 }}
+                </p>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ record.semester|title }} {{ record.academic_year }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if record.grade == 'A+' or record.grade == 'A' %}bg-green-100 text-green-800 {% elif record.grade == 'A-' or record.grade == 'B+' or record.grade == 'B' %}bg-blue-100 text-blue-800 {% elif record.grade == 'B-' or record.grade == 'C+' or record.grade == 'C' %}bg-yellow-100 text-yellow-800 {% elif record.grade == 'F' %}bg-red-100 text-red-800 {% else %}bg-gray-100 text-gray-800{% endif %}"
+              >
+                {{ record.grade }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ record.grade_points }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ record.created_at|date:"M d, Y" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="px-6 py-12 text-center">
+      <i class="fas fa-file-alt text-gray-400 text-4xl mb-4"></i>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">
+        No Academic Records
+      </h3>
+      <p class="text-gray-500 mb-4">
+        Get started by adding your first academic record.
+      </p>
+      <a
+        href="{% url 'student_services:add_academic_record' %}"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-uct-blue hover:bg-blue-700"
+      >
+        <i class="fas fa-plus mr-2"></i>
+        Add Academic Record
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

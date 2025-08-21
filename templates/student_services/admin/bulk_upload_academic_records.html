@@ -1,0 +1,288 @@
+{% extends 'base.html' %} {% block title %}Bulk Upload Academic Records - Smart
+Campus UCT{% endblock %} {% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <div class="sm:flex-auto">
+      <h1 class="text-2xl font-semibold text-gray-900">
+        Bulk Upload Academic Records
+      </h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Upload multiple academic records for a course using a CSV file
+      </p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none space-x-3">
+      <a
+        href="{% url 'student_services:download_sample_csv' %}"
+        class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+      >
+        <i class="fas fa-download mr-2"></i>
+        Download Template
+      </a>
+      <a
+        href="{% url 'student_services:academic_records_management' %}"
+        class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>
+        Back to Management
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Form -->
+    <div class="lg:col-span-2">
+      <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Course and Period Information -->
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">
+              <i class="fas fa-book mr-2 text-uct-blue"></i>
+              Course and Period Information
+            </h3>
+          </div>
+          <div class="px-6 py-6">
+            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+              <div class="sm:col-span-2">
+                <label
+                  for="{{ form.course.id_for_label }}"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Course *
+                </label>
+                <div class="mt-1">{{ form.course }}</div>
+                {% if form.course.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ form.course.errors.0 }}
+                </p>
+                {% endif %}
+                <p class="mt-1 text-xs text-gray-500">
+                  {{ form.course.help_text }}
+                </p>
+              </div>
+
+              <div>
+                <label
+                  for="{{ form.semester.id_for_label }}"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Semester *
+                </label>
+                <div class="mt-1">{{ form.semester }}</div>
+                {% if form.semester.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ form.semester.errors.0 }}
+                </p>
+                {% endif %}
+              </div>
+
+              <div>
+                <label
+                  for="{{ form.academic_year.id_for_label }}"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Academic Year *
+                </label>
+                <div class="mt-1">{{ form.academic_year }}</div>
+                {% if form.academic_year.errors %}
+                <p class="mt-1 text-sm text-red-600">
+                  {{ form.academic_year.errors.0 }}
+                </p>
+                {% endif %}
+                <p class="mt-1 text-xs text-gray-500">Format: 2024-2025</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Upload -->
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">
+              <i class="fas fa-upload mr-2 text-uct-blue"></i>
+              CSV File Upload
+            </h3>
+          </div>
+          <div class="px-6 py-6">
+            <div>
+              <label
+                for="{{ form.csv_file.id_for_label }}"
+                class="block text-sm font-medium text-gray-700"
+              >
+                CSV File *
+              </label>
+              <div class="mt-1">{{ form.csv_file }}</div>
+              {% if form.csv_file.errors %}
+              <p class="mt-1 text-sm text-red-600">
+                {{ form.csv_file.errors.0 }}
+              </p>
+              {% endif %}
+              <p class="mt-1 text-xs text-gray-500">
+                {{ form.csv_file.help_text }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3">
+          <a
+            href="{% url 'student_services:academic_records_management' %}"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            Cancel
+          </a>
+          <button
+            type="submit"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            <i class="fas fa-upload mr-2"></i>
+            Upload Records
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- CSV Format Requirements -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            CSV Format Requirements
+          </h3>
+        </div>
+        <div class="px-6 py-6">
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-sm font-medium text-gray-900 mb-2">
+                Required Columns:
+              </h4>
+              <ul class="text-sm text-gray-600 space-y-1">
+                <li>
+                  <code class="bg-gray-100 px-1 rounded">student_id</code> -
+                  Student ID or username
+                </li>
+                <li>
+                  <code class="bg-gray-100 px-1 rounded">grade</code> - Letter
+                  grade (A+, A, B+, etc.)
+                </li>
+                <li>
+                  <code class="bg-gray-100 px-1 rounded">grade_points</code> -
+                  GPA points (0.0-4.0)
+                </li>
+                <li>
+                  <code class="bg-gray-100 px-1 rounded">credits_earned</code> -
+                  Number of credits
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 class="text-sm font-medium text-gray-900 mb-2">
+                Sample Row:
+              </h4>
+              <div class="bg-gray-50 p-3 rounded text-xs font-mono">
+                student123,A,3.7,3
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Guidelines -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Upload Guidelines</h3>
+        </div>
+        <div class="px-6 py-6">
+          <ul class="text-sm text-gray-600 space-y-2">
+            <li class="flex items-start">
+              <i
+                class="fas fa-check-circle text-green-500 mt-0.5 mr-2 flex-shrink-0"
+              ></i>
+              File must be in CSV format (.csv)
+            </li>
+            <li class="flex items-start">
+              <i
+                class="fas fa-check-circle text-green-500 mt-0.5 mr-2 flex-shrink-0"
+              ></i>
+              Maximum file size: 5MB
+            </li>
+            <li class="flex items-start">
+              <i
+                class="fas fa-check-circle text-green-500 mt-0.5 mr-2 flex-shrink-0"
+              ></i>
+              First row must contain column headers
+            </li>
+            <li class="flex items-start">
+              <i
+                class="fas fa-check-circle text-green-500 mt-0.5 mr-2 flex-shrink-0"
+              ></i>
+              Student IDs must exist in the system
+            </li>
+            <li class="flex items-start">
+              <i
+                class="fas fa-check-circle text-green-500 mt-0.5 mr-2 flex-shrink-0"
+              ></i>
+              Duplicate records will be skipped
+            </li>
+            <li class="flex items-start">
+              <i
+                class="fas fa-check-circle text-green-500 mt-0.5 mr-2 flex-shrink-0"
+              ></i>
+              Use UTF-8 encoding for special characters
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Download Template -->
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-download text-green-400"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-green-800">Need a Template?</h3>
+            <div class="mt-2 text-sm text-green-700">
+              <p>
+                Download our CSV template with sample data to get started
+                quickly.
+              </p>
+            </div>
+            <div class="mt-3">
+              <a
+                href="{% url 'student_services:download_sample_csv' %}"
+                class="text-sm font-medium text-green-800 hover:text-green-600"
+              >
+                Download Template <i class="fas fa-external-link-alt ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Processing Info -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-info-circle text-blue-400"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-blue-800">Processing Info</h3>
+            <div class="mt-2 text-sm text-blue-700">
+              <p>
+                The system will validate each row and report any errors. Only
+                valid records will be imported.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

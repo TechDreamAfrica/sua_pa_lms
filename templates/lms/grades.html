@@ -1,0 +1,232 @@
+{% extends 'base.html' %} 
+{% load static %} {% block title %}My Grades - Sua Pa LMS{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">My Grades</h1>
+    <a
+      href="{% url 'lms:dashboard' %}"
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+    >
+      <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+    </a>
+  </div>
+
+  {% if submissions %}
+  <!-- Overall Statistics -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full">
+          <i class="fas fa-clipboard-list text-blue-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Total Assignments</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ submissions.count }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-green-100 p-3 rounded-full">
+          <i class="fas fa-chart-line text-green-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Average Grade</p>
+          <p class="text-2xl font-bold text-gray-900">85.2%</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-yellow-100 p-3 rounded-full">
+          <i class="fas fa-star text-yellow-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Highest Grade</p>
+          <p class="text-2xl font-bold text-gray-900">98%</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center">
+        <div class="bg-purple-100 p-3 rounded-full">
+          <i class="fas fa-trophy text-purple-600 text-xl"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">Grade Trend</p>
+          <p class="text-2xl font-bold text-green-600">↗ +2.1%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grades by Course -->
+  <div class="bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-800">Grade Details</h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full table-auto">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Assignment
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Course
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Due Date
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Points
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Grade
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Percentage
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for submission in submissions %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="text-sm font-medium text-gray-900">
+                  <a
+                    href="{% url 'lms:assignment_detail' submission.assignment.pk %}"
+                    class="hover:text-blue-600"
+                  >
+                    {{ submission.assignment.title }}
+                  </a>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">
+                {{ submission.assignment.course.title }}
+              </div>
+              <div class="text-sm text-gray-500">
+                {{ submission.assignment.course.code }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ submission.assignment.due_date|date:"M d, Y" }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ submission.grade|floatformat:1 }} / {{ submission.assignment.max_points }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">
+                {{ submission.grade|floatformat:1 }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="text-sm font-medium {% if submission.percentage >= 90 %}text-green-600 {% elif submission.percentage >= 80 %}text-blue-600 {% elif submission.percentage >= 70 %}text-yellow-600 {% elif submission.percentage >= 60 %}text-orange-600 {% else %}text-red-600{% endif %}"
+              >
+                {{ submission.percentage }}%
+              </span>
+            </td>
+
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                  {% if submission.percentage >= 90 %}bg-green-100 text-green-800
+                  {% elif submission.percentage >= 80 %}bg-blue-100 text-blue-800
+                  {% elif submission.percentage >= 70 %}bg-yellow-100 text-yellow-800
+                  {% elif submission.percentage >= 60 %}bg-orange-100 text-orange-800
+                  {% else %}bg-red-100 text-red-800{% endif %}">
+                {% if submission.percentage >= 90 %}Excellent
+                {% elif submission.percentage >= 80 %}Good
+                {% elif submission.percentage >= 70 %}Satisfactory
+                {% elif submission.percentage >= 60 %}Needs Improvement
+                {% else %}Poor{% endif %}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Grade Distribution Chart -->
+  <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Grade Distribution</h2>
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div class="text-center">
+        <div class="bg-green-100 rounded-lg p-4 mb-2">
+          <div class="text-2xl font-bold text-green-600">3</div>
+          <div class="text-sm text-gray-600">A (90-100%)</div>
+        </div>
+      </div>
+      <div class="text-center">
+        <div class="bg-blue-100 rounded-lg p-4 mb-2">
+          <div class="text-2xl font-bold text-blue-600">5</div>
+          <div class="text-sm text-gray-600">B (80-89%)</div>
+        </div>
+      </div>
+      <div class="text-center">
+        <div class="bg-yellow-100 rounded-lg p-4 mb-2">
+          <div class="text-2xl font-bold text-yellow-600">2</div>
+          <div class="text-sm text-gray-600">C (70-79%)</div>
+        </div>
+      </div>
+      <div class="text-center">
+        <div class="bg-orange-100 rounded-lg p-4 mb-2">
+          <div class="text-2xl font-bold text-orange-600">1</div>
+          <div class="text-sm text-gray-600">D (60-69%)</div>
+        </div>
+      </div>
+      <div class="text-center">
+        <div class="bg-red-100 rounded-lg p-4 mb-2">
+          <div class="text-2xl font-bold text-red-600">0</div>
+          <div class="text-sm text-gray-600">F (0-59%)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="text-center py-12">
+    <i class="fas fa-chart-bar text-6xl text-gray-300 mb-4"></i>
+    <h3 class="text-xl font-semibold text-gray-600 mb-2">
+      No Grades Available
+    </h3>
+    <p class="text-gray-500">You don't have any graded assignments yet.</p>
+    <a
+      href="{% url 'lms:assignment_list' %}"
+      class="inline-block mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+    >
+      View Assignments
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

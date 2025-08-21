@@ -1,0 +1,351 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}User Details - 
+{{ user_obj.get_full_name|default:user_obj.username }} - Sua Pa LMS{% endblock %}
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <nav class="flex" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+          <li>
+            <div>
+              <a
+                href="{% url 'administration:dashboard' %}"
+                class="text-gray-400 hover:text-gray-500"
+              >
+                <i class="fas fa-home"></i>
+                <span class="sr-only">Dashboard</span>
+              </a>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right text-gray-400"></i>
+              <a
+                href="{% url 'administration:user_management' %}"
+                class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                >Users</a
+              >
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <i class="fas fa-chevron-right text-gray-400"></i>
+              <span class="ml-4 text-sm font-medium text-gray-500"
+                >{{ user_obj.get_full_name|default:user_obj.username }}</span
+              >
+            </div>
+          </li>
+        </ol>
+      </nav>
+      <h1 class="mt-2 text-2xl font-semibold text-gray-900">User Details</h1>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <a
+        href="{% url 'administration:user_edit' user_obj.pk %}"
+        class="inline-flex items-center justify-center rounded-md border border-transparent bg-uct-blue px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+      >
+        <i class="fas fa-edit mr-2"></i>
+        Edit User
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <!-- User Information Card -->
+    <div class="lg:col-span-1">
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">
+            Personal Information
+          </h3>
+        </div>
+        <div class="px-6 py-4">
+          <div class="flex items-center mb-4">
+            <div class="h-16 w-16 flex-shrink-0">
+              <div
+                class="h-16 w-16 rounded-full bg-uct-blue flex items-center justify-center"
+              >
+                <span class="text-xl font-medium text-white">
+                  {{ user_obj.first_name.0|default:user_obj.username.0|upper }}
+                  {{ user_obj.last_name.0|default:""|upper }}
+                </span>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h4 class="text-lg font-medium text-gray-900">
+                {{ user_obj.get_full_name|default:user_obj.username }}
+              </h4>
+              <p class="text-sm text-gray-500">{{ user_obj.email }}</p>
+            </div>
+          </div>
+
+          <dl class="grid grid-cols-1 gap-4">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Username</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user_obj.username }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">User Type</dt>
+              <dd class="mt-1">
+                {% if user_obj.userprofile.user_type == 'student' %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800"
+                >
+                  Student
+                </span>
+                {% elif user_obj.userprofile.user_type == 'faculty' %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >
+                  Faculty
+                </span>
+                {% elif user_obj.userprofile.user_type == 'admin' %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800"
+                >
+                  Administrator
+                </span>
+                {% endif %}
+              </dd>
+            </div>
+            {% if user_obj.userprofile.student_id %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Student ID</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user_obj.userprofile.student_id }}
+              </dd>
+            </div>
+            {% endif %} {% if user_obj.userprofile.employee_id %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Employee ID</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user_obj.userprofile.employee_id }}
+              </dd>
+            </div>
+            {% endif %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Department</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user_obj.userprofile.get_department_display|default:"Not assigned" }}
+              </dd>
+            </div>
+            {% if user_obj.userprofile.phone_number %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Phone</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user_obj.userprofile.phone_number }}
+              </dd>
+            </div>
+            {% endif %} {% if user_obj.userprofile.date_of_birth %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Date of Birth</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user_obj.userprofile.date_of_birth|date:"F d, Y" }}
+              </dd>
+            </div>
+            {% endif %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Status</dt>
+              <dd class="mt-1">
+                {% if user_obj.is_active %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                >
+                  Active
+                </span>
+                {% else %}
+                <span
+                  class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800"
+                >
+                  Inactive
+                </span>
+                {% endif %}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Date Joined</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ user_obj.date_joined|date:"F d, Y" }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Last Login</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {% if user_obj.last_login %} {{ user_obj.last_login|date:"F d, Y g:i A" }} {% else %} Never {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- Academic Information -->
+    <div class="lg:col-span-2">
+      {% if user_obj.userprofile.is_student %}
+      <!-- Student Academic Records -->
+      <div class="bg-white shadow rounded-lg mb-6">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-medium text-gray-900">Academic Records</h3>
+            {% if gpa %}
+            <div class="text-right">
+              <div class="text-sm text-gray-500">Current GPA</div>
+              <div class="text-2xl font-bold text-uct-blue">{{ gpa }}</div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="px-6 py-4">
+          {% if academic_records %}
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Course
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Semester
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Grade
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Credits
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                {% for record in academic_records %}
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900">
+                      {{ record.course.code }}
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      {{ record.course.title }}
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ record.semester }} {{ record.academic_year }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if record.grade_points >= 3.7 %}bg-green-100 text-green-800 {% elif record.grade_points >= 3.0 %}bg-blue-100 text-blue-800 {% elif record.grade_points >= 2.0 %}bg-yellow-100 text-yellow-800 {% else %}bg-red-100 text-red-800{% endif %}"
+                    >
+                      {{ record.letter_grade }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ record.credits_earned }}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="text-gray-500 text-center py-4">
+            No academic records found.
+          </p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Current Enrollments -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">Current Enrollments</h3>
+        </div>
+        <div class="px-6 py-4">
+          {% if enrollments %}
+          <div class="grid grid-cols-1 gap-4">
+            {% for enrollment in enrollments %}
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">
+                    {{ enrollment.course.code }}
+                  </h4>
+                  <p class="text-sm text-gray-500">
+                    {{ enrollment.course.title }}
+                  </p>
+                  <p class="text-xs text-gray-400">
+                    Instructor: {{ enrollment.course.instructor.get_full_name }}
+                  </p>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm text-gray-500">Credits</div>
+                  <div class="text-lg font-medium text-gray-900">
+                    {{ enrollment.course.credits }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-gray-500 text-center py-4">
+            No current enrollments found.
+          </p>
+          {% endif %}
+        </div>
+      </div>
+      {% elif user_obj.userprofile.is_faculty %}
+      <!-- Faculty Courses -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">
+            Teaching Assignments
+          </h3>
+        </div>
+        <div class="px-6 py-4">
+          {% if taught_courses %}
+          <div class="grid grid-cols-1 gap-4">
+            {% for course in taught_courses %}
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="text-sm font-medium text-gray-900">
+                    {{ course.code }}
+                  </h4>
+                  <p class="text-sm text-gray-500">{{ course.title }}</p>
+                  <p class="text-xs text-gray-400">
+                    Department: {{ course.department.name }}
+                  </p>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm text-gray-500">Credits</div>
+                  <div class="text-lg font-medium text-gray-900">
+                    {{ course.credits }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-gray-500 text-center py-4">
+            No teaching assignments found.
+          </p>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
